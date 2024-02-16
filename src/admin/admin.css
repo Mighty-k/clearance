@@ -1,0 +1,76 @@
+/* HODAdmin.css */
+
+.container {
+  margin-top: 20px;
+}
+
+h1 {
+  color: #003366;
+}
+
+h2 {
+  color: #006699;
+}
+#hod-prof{
+  background-color: rgba(98, 155, 0, 0.07);
+  width: 100%;
+  padding-top:10%;
+  padding: 0%;
+  margin-bottom:4% ;
+  color: black;
+  /* border: 1px solid rgba(0, 0, 0, 0.556); */
+}
+#hod-prof img{
+  width: 25%;
+}
+#hod-prof .cardd-left{
+  width: 49%;
+  margin-top: 3%;
+}
+#hod-prof .cardd-middle{
+  width:0.2vh;
+  height: 22vh;
+  background-color: rgba(15, 67, 16, 0.134);
+  margin-right: 1%;
+}
+#hod-prof .cardd-right{
+  width: 50%;
+  margin-top: 5%;
+}
+
+.cardd-text #hod {
+  font-size: 20px;
+  margin-top: 20% ;
+}
+#hod .fn, #hod .dept{
+  font-size: 20px;
+}
+#hod, .dept{
+  margin-top: 7%;
+}
+.clr-reqs{
+  /* background-color: rgb(102, 168, 108);
+  padding: 2%; */
+  /* border-radius: 12px; */
+  margin-bottom: 2%;
+}
+
+.clr-reqs .text-left, .clr-aprv .text-left{
+  color: rgb(8, 8, 8);
+}
+.btn-success {
+  background-color: #0099cc;
+  border-color: #0099cc;
+  margin-right: 10%;
+  /* margin-top: 10%; */
+}
+
+.btn-danger {
+  background-color: #cc0000;
+  border-color: #cc0000;
+}
+
+.table {
+  border-radius: 8px;
+  overflow: hidden;
+}
