@@ -12,17 +12,17 @@
       "dateOfBirth": "1998-05-15",
       "monthOfGraduation": "July",
       "clearanceRequest": "true",
-      "HOD-approval": true,
-      "BURSARY-approval": false,
-      "LIBRARY-approval": false,
-      "BOOKSHOP-approval": false,
-      "E. G. WHITE-approval": false,
-      "BU Teaching Hospital-approval": false,
-      "ALUMNI-approval": false,
-      "SECURITY-approval": false,
-      "VPSD-approval": false,
+      "HOD-approval": "true",
+      "BURSARY-approval": "true",
+      "LIBRARY-approval": "true",
+      "BOOKSHOP-approval": "true",
+      "E. G. WHITE-approval": "false",
+      "BU Teaching Hospital-approval": "false",
+      "ALUMNI-approval": "false",
+      "SECURITY-approval": "false",
+      "VPSD-approval": "false",
       "id": "cbb8",
-      "message": ""
+      "message": "no messages"
     },
     {
       "name": "James Joe Don",
@@ -35,16 +35,16 @@
       "dateOfBirth": "1999-02-20",
       "monthOfGraduation": "July",
       "clearanceRequest": "true",
-      "HOD-approval": true,
-      "BURSARY-approval": false,
-      "LIBRARY-approval": false,
-      "BOOKSHOP-approval": false,
-      "E. G. WHITE-approval": false,
-      "BU Teaching Hospital-approval": false,
-      "ALUMNI-approval": false,
-      "SECURITY-approval": false,
-      "VPSD-approval": false,
-      "message": "",
+      "HOD-approval": "true",
+      "BURSARY-approval": "true",
+      "LIBRARY-approval": "true",
+      "BOOKSHOP-approval": "true",
+      "E. G. WHITE-approval": "false",
+      "BU Teaching Hospital-approval": "false",
+      "ALUMNI-approval": "false",
+      "SECURITY-approval": "false",
+      "VPSD-approval": "false",
+      "message": "no messages",
       "id": "27a0"
     }
   ],
@@ -53,56 +53,56 @@
       "username": "bursary",
       "password": "bursaryadmin",
       "fullName": "Bursary Administrator",
-      "department":"BURSARY",
+      "department": "BURSARY",
       "id": "5809"
     },
     {
       "username": "library",
       "password": "libraryadmin",
       "fullName": "Library Administrator",
-      "department":"LIBRARY",
+      "department": "LIBRARY",
       "id": "0e95"
     },
     {
       "username": "bookshop",
       "password": "bookshopadmin",
       "fullName": "Bookshop Administrator",
-      "department":"BOOKSHOP",
+      "department": "BOOKSHOP",
       "id": "fd0f"
     },
     {
       "username": "egwhite",
       "password": "egwhiteadmin",
       "fullName": "E. G. White Administrator",
-      "department":"EGWHITE",
+      "department": "EGWHITE",
       "id": "36fe"
     },
     {
       "username": "buth",
       "password": "buthadmin",
       "fullName": "BU Teaching Hospital Administrator",
-      "department":"BUTH",
+      "department": "BUTH",
       "id": "2359"
     },
     {
       "username": "alumni",
       "password": "alumniadmin",
       "fullName": "Alumni Administrator",
-      "department":"ALUMNI",
+      "department": "ALUMNI",
       "id": "85cf"
     },
     {
       "username": "security",
       "password": "securityadmin",
       "fullName": "Security Administrator",
-      "department":"SECURITY",
+      "department": "SECURITY",
       "id": "983c"
     },
     {
       "username": "vpsd",
       "password": "vpsdadmin",
       "fullName": "Vice President - Student Affairs Administrator",
-      "department":"VPSD",
+      "department": "VPSD",
       "id": "224f"
     }
   ],

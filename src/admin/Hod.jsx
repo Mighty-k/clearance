@@ -5,11 +5,11 @@ import "./admin.css";
 import Auth from "../login/Auth";
 
 const Hod = () => {
-  // Get the hod data from the local storage
   const [isExpanded, setIsExpanded] = useState(false);
   const hod = JSON.parse(localStorage.getItem("loginData"));
   const [students, setStudents] = useState([]);
   const [approved, setApproved] = useState([]);
+  const [rejected, setRejected] = useState([]); // State for rejected students
   const [rejectMessage, setRejectMessage] = useState(""); // State for reject message
   const navigate = useNavigate();
 
@@ -17,11 +17,10 @@ const Hod = () => {
   const handleLeave = () => setIsExpanded(false);
   const handleLogout = () => {
     localStorage.removeItem('loginData');
-    navigate('/');
+    navigate('/login');
   };
 
   useEffect(() => {
-    // fetch the students who requested clearance from the same department as the hod
     axios
       .get(`http://localhost:3000/students?clearanceRequest=true&department=${hod.department}`)
       .then((res) => {
@@ -33,20 +32,21 @@ const Hod = () => {
   }, [hod]);  
 
   useEffect(() => {
-    // filter students based on HOD approval status
-    const filteredApproved = students.filter(student => student['HOD-approval'] === true);
+    const filteredApproved = students.filter(student => student['HOD-approval'] === "true");
+    const filteredRejected = students.filter(student => student['HOD-approval'] === "rejected"); // Filter out rejected students
     setApproved(filteredApproved);
+    setRejected(filteredRejected);
   }, [students]);  
 
   const handleApprove = (student) => {
-    // send the student's request to the next admin for approval
     axios
       .patch(`http://localhost:3000/students/${student.id}`, {
-        "HOD-approval": true,
+        "HOD-approval": "true",
+        "message": "no messages", 
       })
       .then((res) => {
-        // remove the student from the students array
         setStudents(students.filter((s) => s.id !== student.id));
+        setApproved([...approved, student]);
       })
       .catch((err) => {
         console.error(err);
@@ -54,20 +54,17 @@ const Hod = () => {
   };
 
   const handleReject = (student) => {
-    // Prompt for reject message
     const message = prompt("Please enter a message to the rejected student:", "Sorry, your request has been rejected because ...");
     if (message) {
-      // Set reject message to state
       setRejectMessage(message);
-      // send the message to the student
       axios
         .patch(`http://localhost:3000/students/${student.id}`, {
-          "HOD-approval": false,
-          "message": message,
+          "HOD-approval": "rejected",
+          "message": message + ` - Rejected by HOD`,
         })
         .then((res) => {
-          // remove the student from the students array
           setStudents(students.filter((s) => s.id !== student.id));
+          setRejected([...rejected, { ...student, message }]); // Add rejected student with rejection message to state
         })
         .catch((err) => {
           console.error(err);
@@ -85,11 +82,6 @@ const Hod = () => {
             </a>
           </li>
           <li className="nav-item">
-            <a className="nav-link" href="/print-clearance">
-              <i className="fas fa-print"></i> {isExpanded && 'Print Clearance Report'}
-            </a>
-          </li>
-          <li className="nav-item">
             <a className="nav-link" onClick={handleLogout}>
               <i className="fas fa-sign-out-alt"></i> {isExpanded && 'Logout'}
             </a>
@@ -97,7 +89,7 @@ const Hod = () => {
         </ul>
       </div>
       <div className="profile">
-      <div className="cardd" id="hod-prof">
+      <div className="cardd" id="admin-prof">
       <div className="cardd-content">
       <div className="cardd-left">
                 <p>
@@ -108,7 +100,7 @@ const Hod = () => {
                
               </div>
               <div className="cardd-left">
-              <p className="cardd-text" id="hod">
+              <p className="cardd-text" id="admin">
                   <span className="fn">Name:</span>  {hod.fullName}<br />
                   <span className="dept">Department:</span>  {hod.department}<br />
                 </p>
@@ -123,16 +115,18 @@ const Hod = () => {
               <tr>
                 <th>Name</th>
                 <th>Department</th>
+                <th>Matric number</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
             {students
-              .filter(student => !student['HOD-approval']) // Filter out students with HOD-approval set to true
+              .filter(student => student['HOD-approval'] === "false") // Filter out students with HOD-approval set to true
               .map((student) => (
                 <tr key={student.id}>
                   <td>{student.name}</td>
                   <td>{student.department}</td>
+                  <td>{student.matricNumber}</td>
                   <td>
                     <button className="btn btn-success" onClick={() => handleApprove(student)}>
                       Approve
@@ -154,6 +148,7 @@ const Hod = () => {
               <tr>
                 <th>Name</th>
                 <th>Department</th>
+                <th>Matric number</th>
               </tr>
             </thead>
             <tbody>
@@ -161,6 +156,33 @@ const Hod = () => {
                 <tr key={student.id}>
                   <td>{student.name}</td>
                   <td>{student.department}</td>
+                  <td>{student.matricNumber}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <hr />
+        <div className="row clr-rejected">
+          <h2 className="text-left">Rejected Clearance</h2>
+          <table className="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Matric number</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rejected.map((student) => (
+                <tr key={student.id}>
+                  <td>{student.name}</td>
+                  <td>{student.department}</td>
+                  <td>{student.matricNumber}</td>
+                  <td>
+                    <button className="btn btn-warning" onClick={() => handleApprove(student)}>Approve</button>
+                  </td>
                 </tr>
               ))}
             </tbody>

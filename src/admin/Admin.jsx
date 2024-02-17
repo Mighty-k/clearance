@@ -2,78 +2,70 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./admin.css";
-import Auth from "../login/Auth";
 
 const Admin = () => {
-  // Get the admin data from the local storage
   const [isExpanded, setIsExpanded] = useState(false);
   const admin = JSON.parse(localStorage.getItem("loginData"));
   const [students, setStudents] = useState([]);
   const [approved, setApproved] = useState([]);
-  const [rejectMessage, setRejectMessage] = useState(""); // State for reject message
+  const [rejected, setRejected] = useState([]);
   const navigate = useNavigate();
 
   const handleHover = () => setIsExpanded(true);
   const handleLeave = () => setIsExpanded(false);
   const handleLogout = () => {
     localStorage.removeItem("loginData");
-    navigate("/");
+    navigate("/login");
   };
 
   useEffect(() => {
-    // fetch the students who requested clearance and have been approved by the previous admin in the hierarchy
-    axios
-      .get(
-        `http://localhost:3000/students?clearanceRequest=true&${admin.username}-approval=false`
-      )
-      .then((res) => {
-        // filter the students based on the approval hierarchy
-        const filteredStudents = res.data.filter((student) => {
-          switch (admin.username) {
-            case "bursary":
-              return student["HOD-approval"] === true;
-            case "library":
-              return student["BURSARY-approval"] === true;
-            case "bookshop":
-              return student["LIBRARY-approval"] === true;
-            case "egwhite":
-              return student["BOOKSHOP-approval"] === true;
-            case "buth":
-              return student["E. G. WHITE-approval"] === true;
-            case "alumni":
-              return student["BU Teaching Hospital-approval"] === true;
-            case "security":
-              return student["ALUMNI-approval"] === true;
-            case "vpsd":
-              return student["SECURITY-approval"] === true;
-            default:
-              return false;
-          }
-        });
-        setStudents(filteredStudents);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    if (!admin) return;
+  
+    const getStudents = async () => {
+      try {
+        let queryParams = `clearanceRequest=true&${admin.username.toUpperCase()}-approval=false&${admin.username.toUpperCase()}-approval=rejected`; // Include rejected status
+        switch (admin.username.toUpperCase()) {
+          case "BURSARY":
+            queryParams += "&HOD-approval=true";
+            break;
+          case "LIBRARY":
+            queryParams += "&BURSARY-approval=true";
+            break;
+          case "BOOKSHOP":
+            queryParams += "&HOD-approval=true&BURSARY-approval=true&LIBRARY-approval=true";
+            break;
+          // Add cases for other admins as needed
+          default:
+            break;
+        }
+        // Convert boolean values to string
+        queryParams = queryParams.replace(/true/g, "true").replace(/false/g, "false");
+        const response = await axios.get(`http://localhost:3000/students?${queryParams}`);
+        const students = response.data;
+        // Separate students into approved, pending approval, and rejected
+        const approvedStudents = students.filter(student => student[`${admin.username.toUpperCase()}-approval`] === "true");
+        const pendingStudents = students.filter(student => student[`${admin.username.toUpperCase()}-approval`] !== "true" && student[`${admin.username.toUpperCase()}-approval`] !== "rejected");
+        const rejectedStudents = students.filter(student => student[`${admin.username.toUpperCase()}-approval`] === "rejected");
+        setApproved(approvedStudents);
+        setStudents(pendingStudents);
+        setRejected(rejectedStudents);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+  
+    getStudents();
   }, [admin]);
-
-  useEffect(() => {
-    // filter students based on admin approval status
-    const filteredApproved = students.filter(
-      (student) => student[`${admin.username}-approval`] === true
-    );
-    setApproved(filteredApproved);
-  }, [students, admin]);
-
+  
   const handleApprove = (student) => {
-    // send the student's request to the next admin for approval
     axios
       .patch(`http://localhost:3000/students/${student.id}`, {
-        [`${admin.username}-approval`]: true,
+        [`${admin.username.toUpperCase()}-approval`]: "true",
+        "message": "no messages", 
       })
-      .then((res) => {
-        // remove the student from the students array
-        setStudents(students.filter((s) => s.id !== student.id));
+      .then(() => {
+        setStudents((prevStudents) => prevStudents.filter((s) => s.id !== student.id));
+        setApproved((prevApproved) => [...prevApproved, student]);
       })
       .catch((err) => {
         console.error(err);
@@ -81,30 +73,25 @@ const Admin = () => {
   };
 
   const handleReject = (student) => {
-    // Prompt for reject message
     const message = prompt(
       "Please enter a message to the rejected student:",
       "Sorry, your request has been rejected because ..."
     );
     if (message) {
-      // Set reject message to state
-      setRejectMessage(message);
-      // send the message to the student
       axios
         .patch(`http://localhost:3000/students/${student.id}`, {
-          [`${admin.username}-approval`]: false,
-          message: message,
+          [`${admin.username.toUpperCase()}-approval`]: "rejected", // Change status to "rejected"
+          message: message + ` - Rejected by ${admin.fullName}`, // Add rejection message with admin's name
         })
-        .then((res) => {
-          // remove the student from the students array
-          setStudents(students.filter((s) => s.id !== student.id));
+        .then(() => {
+          setStudents((prevStudents) => prevStudents.filter((s) => s.id !== student.id));
+          setRejected((prevRejected) => [...prevRejected, { ...student, message }]); // Add to rejected list with rejection message
         })
         .catch((err) => {
           console.error(err);
         });
     }
   };
-
   return (
     <div className="container">
       <div
@@ -117,16 +104,11 @@ const Admin = () => {
             <a className="nav-link active" href="/admin">
               <i className="fas fa-home"></i> {isExpanded && "Home"}
             </a>
-          </li>
+          </li> 
           <li className="nav-item">
-            <a className="nav-link" href="/print-clearance">
-              <i className="fas fa-print"></i> {isExpanded && "Print Clearance Report"}
-            </a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link" onClick={handleLogout}>
+            <button className="nav-link" onClick={handleLogout}>
               <i className="fas fa-sign-out-alt"></i> {isExpanded && "Logout"}
-            </a>
+            </button>
           </li>
         </ul>
       </div>
@@ -135,10 +117,7 @@ const Admin = () => {
           <div className="cardd-content">
             <div className="cardd-left">
               <p>
-                <img
-                  src="../src/img/Profile-Avatar-PNG.png"
-                  alt="profile"
-                />
+                <img src="../src/img/Profile-Avatar-PNG.png" alt="profile" />
               </p>
             </div>
             <div className="cardd-middle"></div>
@@ -153,6 +132,7 @@ const Admin = () => {
           </div>
         </div>
       </div>
+      {/* clearance request */}
       <div className="row clr-reqs">
         <h2 className="text-left">Clearance Requests</h2>
         <table className="table table-striped table-hover">
@@ -160,14 +140,18 @@ const Admin = () => {
             <tr>
               <th>Name</th>
               <th>Department</th>
+              <th>Matric number</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {students.map((student) => (
+          {students
+            .filter(student => student[`${admin.username.toUpperCase()}-approval`] === "false")
+            .map(student => (
               <tr key={student.id}>
                 <td>{student.name}</td>
                 <td>{student.department}</td>
+                <td>{student.matricNumber}</td>
                 <td>
                   <button
                     className="btn btn-success"
@@ -184,24 +168,54 @@ const Admin = () => {
                 </td>
               </tr>
             ))}
-          </tbody>
+        </tbody>
         </table>
       </div>
       <hr />
-      <div className="row clr-aprv">
-        <h2 className="text-left">Approved Clearance</h2>
+      {/* clearance approved */}
+        <div className="row clr-aprv">
+          <h2 className="text-left">Approved Clearance</h2>
+          <table className="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Matric number</th>
+              </tr>
+            </thead>
+            <tbody>
+              {approved.map(student => (
+                <tr key={student.id}>
+                  <td>{student.name}</td>
+                  <td>{student.department}</td>
+                  <td>{student.matricNumber}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <hr />
+           {/* Clearance rejected */}
+      <div className="row clr-rejected">
+        <h2 className="text-left">Rejected Clearance</h2>
         <table className="table table-striped table-hover">
           <thead>
             <tr>
               <th>Name</th>
               <th>Department</th>
+              <th>Matric number</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            {approved.map((student) => (
+            {rejected.map((student) => (
               <tr key={student.id}>
                 <td>{student.name}</td>
                 <td>{student.department}</td>
+                <td>{student.matricNumber}</td>
+                <td>
+                  <button className="btn btn-warning" onClick={() => handleApprove(student)}>Approve</button>
+                </td>
               </tr>
             ))}
           </tbody>

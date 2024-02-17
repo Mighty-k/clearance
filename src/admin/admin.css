@@ -11,7 +11,7 @@ h1 {
 h2 {
   color: #006699;
 }
-#hod-prof{
+#admin-prof{
   background-color: rgba(98, 155, 0, 0.07);
   width: 100%;
   padding-top:10%;
@@ -20,32 +20,32 @@ h2 {
   color: black;
   /* border: 1px solid rgba(0, 0, 0, 0.556); */
 }
-#hod-prof img{
+#admin-prof img{
   width: 25%;
 }
-#hod-prof .cardd-left{
+#admin-prof .cardd-left{
   width: 49%;
   margin-top: 3%;
 }
-#hod-prof .cardd-middle{
+#admin-prof .cardd-middle{
   width:0.2vh;
   height: 22vh;
   background-color: rgba(15, 67, 16, 0.134);
   margin-right: 1%;
 }
-#hod-prof .cardd-right{
-  width: 50%;
+#admin-prof .cardd-right{
+  width: 51%;
   margin-top: 5%;
 }
 
-.cardd-text #hod {
+.cardd-text #admin {
   font-size: 20px;
   margin-top: 20% ;
 }
-#hod .fn, #hod .dept{
+#admin .fn, #admin .dept{
   font-size: 20px;
 }
-#hod, .dept{
+#admin, .dept{
   margin-top: 7%;
 }
 .clr-reqs{
