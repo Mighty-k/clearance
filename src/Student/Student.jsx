@@ -156,7 +156,7 @@ const StudentDashboard = () => {
             <div className="cardd-content">
               <div className="cardd-left">
                 <p>
-                  <img src="../src/img/Profile-Avatar-PNG.png" alt="profile" />
+                  <img src="src/img/Profile-Avatar-PNG.png" alt="profile" />
                 </p>
               </div>
               <div className="cardd-middle">
