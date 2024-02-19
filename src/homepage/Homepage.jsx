@@ -17,7 +17,7 @@ const Homepage = () => {
         <a href="/login" className="btn btn-primary btn-lg">Get Started</a>
       </div>
       <div className="col-md-6 d-flex align-items-center justify-content-center">
-        <img src="../src/img/bulogo.jpg" alt="Student celebrating graduation" className="img-fluid w-75"></img>
+        <img src="/src/img/bulogo.jpg" alt="Student celebrating graduation" className="img-fluid w-75"></img>
       </div>
     </div>
   </div>

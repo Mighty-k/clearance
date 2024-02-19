@@ -88,7 +88,7 @@ const Login = () => {
       <div className="row">
         <div className="col-md-3">
           <img
-            src="../src/img/bulogo.jpg"
+            src="src/img/bulogo.jpg"
             alt="Student Clearance System"
             className="img-fluid img"
           />
