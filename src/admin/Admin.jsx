@@ -5,7 +5,7 @@ import "./admin.css";
 
 const Admin = () => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const admin = JSON.parse(localStorage.getItem("loginData"));
+  const admin = JSON.parse(localStorage.getItem("admin_loginData"));
   const [students, setStudents] = useState([]);
   const [approved, setApproved] = useState([]);
   const [rejected, setRejected] = useState([]);
@@ -14,7 +14,7 @@ const Admin = () => {
   const handleHover = () => setIsExpanded(true);
   const handleLeave = () => setIsExpanded(false);
   const handleLogout = () => {
-    localStorage.removeItem("loginData");
+    localStorage.removeItem("admin_loginData");
     navigate("/login");
   };
 
@@ -32,9 +32,26 @@ const Admin = () => {
             queryParams += "&BURSARY-approval=true";
             break;
           case "BOOKSHOP":
-            queryParams += "&HOD-approval=true&BURSARY-approval=true&LIBRARY-approval=true";
+            queryParams += "&LIBRARY-approval=true";
             break;
-          // Add cases for other admins as needed
+          case "EGWHITE":
+            queryParams += "&BOOKSHP-approval";
+            break;
+          case "BUTH":
+            queryParams += "&EGWHITE-approval=true";
+            break;
+          case "ALUMNI":
+            queryParams += "&BUTH-approval=true";
+            break;
+          case "SECURITY":
+            queryParams += "&ALUMNI-approval=true";
+            break;
+          case "VPSD":
+            queryParams += "&SECURITY-approval=true";
+            break;
+          case "REGISTRY":
+            queryParams += "&VPSD-approval=true";
+            break;
           default:
             break;
         }
@@ -75,13 +92,13 @@ const Admin = () => {
   const handleReject = (student) => {
     const message = prompt(
       "Please enter a message to the rejected student:",
-      "Sorry, your request has been rejected because ..."
+      "Sorry, your request has been rejected because "
     );
     if (message) {
       axios
         .patch(`http://localhost:3000/students/${student.id}`, {
           [`${admin.username.toUpperCase()}-approval`]: "rejected", // Change status to "rejected"
-          message: message + ` - Rejected by ${admin.fullName}`, // Add rejection message with admin's name
+          message: message + ` please see your ${admin.fullName}`, // Add rejection message with admin's name
         })
         .then(() => {
           setStudents((prevStudents) => prevStudents.filter((s) => s.id !== student.id));
@@ -172,29 +189,7 @@ const Admin = () => {
         </table>
       </div>
       <hr />
-      {/* clearance approved */}
-        <div className="row clr-aprv">
-          <h2 className="text-left">Approved Clearance</h2>
-          <table className="table table-striped table-hover">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Department</th>
-                <th>Matric number</th>
-              </tr>
-            </thead>
-            <tbody>
-              {approved.map(student => (
-                <tr key={student.id}>
-                  <td>{student.name}</td>
-                  <td>{student.department}</td>
-                  <td>{student.matricNumber}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <hr />
+     
            {/* Clearance rejected */}
       <div className="row clr-rejected">
         <h2 className="text-left">Rejected Clearance</h2>
@@ -221,6 +216,29 @@ const Admin = () => {
           </tbody>
         </table>
       </div>
+      <hr />
+       {/* clearance approved */}
+       <div className="row clr-aprv">
+          <h2 className="text-left">Approved Clearance</h2>
+          <table className="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Matric number</th>
+              </tr>
+            </thead>
+            <tbody>
+              {approved.map(student => (
+                <tr key={student.id}>
+                  <td>{student.name}</td>
+                  <td>{student.department}</td>
+                  <td>{student.matricNumber}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
     </div>
   );
 };

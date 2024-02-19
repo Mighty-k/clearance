@@ -47,34 +47,34 @@ const StudentDashboard = () => {
   };
 
   useEffect(() => {
-    const storedStudentData = JSON.parse(localStorage.getItem('loginData'));
+    const storedStudentData = JSON.parse(localStorage.getItem('student_loginData'));
+    if (!storedStudentData) {
+      navigate('/login'); // Redirect to login page if user data is not available
+      return;
+    }
+
     setStudent(storedStudentData);
 
-    // Get student's department approval data from JSON database
+    // Fetch student data dynamically
     const fetchStudentData = async () => {
       try {
-        const response = await fetch('http://localhost:3000/students'); // Adjust URL as needed
-        const studentsData = await response.json();
-
-        const currentStudent = studentsData.find(
-          (student) => student.id === storedStudentData.id
-        );
-
-        if (currentStudent) {
-          // Extract and format department approval data
-          const formattedDepartments = Object.entries(currentStudent)
-            .filter(([key, value]) => key.endsWith('-approval'))
-            .map(([department, adminApproval]) => ({
-              name: department.slice(0, -9), // Adjust the slice value according to your department naming convention
-              approvalStatus: adminApproval === "true" ? "Approved" : adminApproval === "rejected" ? "Rejected" : "Pending",
-            }));
-
-          setDepartments(formattedDepartments); // Correctly set the state
-          renderCircularChart(formattedDepartments);
-        } else {
-          console.error('Error fetching student data:', response.statusText);
-          // Handle error: Display appropriate message to the user
+        const response = await fetch(`http://localhost:3000/students/${storedStudentData.id}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch student data');
         }
+        const studentData = await response.json();
+        setStudent(studentData);
+
+        // Process department approval data
+        const formattedDepartments = Object.entries(studentData)
+          .filter(([key, value]) => key.endsWith('-approval'))
+          .map(([department, adminApproval]) => ({
+            name: department.slice(0, -9),
+            approvalStatus: adminApproval === "true" ? "Approved" : adminApproval === "rejected" ? "Rejected" : "Pending",
+          }));
+
+        setDepartments(formattedDepartments);
+        renderCircularChart(formattedDepartments);
       } catch (error) {
         console.error('Error fetching student data:', error);
         // Handle error: Display appropriate message to the user
@@ -138,7 +138,7 @@ const StudentDashboard = () => {
             </a>
           </li>
           <li className="nav-item">
-            <a className="nav-link" href="/print-clearance">
+            <a className="nav-link" href="/clearance">
               <i className="fas fa-print"></i> {isExpanded && 'Print Clearance Report'}
             </a>
           </li>

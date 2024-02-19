@@ -16,11 +16,12 @@
       "BURSARY-approval": "true",
       "LIBRARY-approval": "true",
       "BOOKSHOP-approval": "true",
-      "E. G. WHITE-approval": "false",
-      "BU Teaching Hospital-approval": "false",
+      "EGWHITE-approval": "true",
+      "BUTH-approval": "true",
       "ALUMNI-approval": "false",
       "SECURITY-approval": "false",
       "VPSD-approval": "false",
+      "REGISTRY-approval": "false",
       "id": "cbb8",
       "message": "no messages"
     },
@@ -39,13 +40,38 @@
       "BURSARY-approval": "true",
       "LIBRARY-approval": "true",
       "BOOKSHOP-approval": "true",
-      "E. G. WHITE-approval": "false",
-      "BU Teaching Hospital-approval": "false",
+      "EGWHITE-approval": "true",
+      "BUTH-approval": "true",
+      "ALUMNI-approval": "true",
+      "SECURITY-approval": "true",
+      "VPSD-approval": "true",
+      "REGISTRY-approval": "true",
+      "message": "no messages",
+      "id": "27a0"
+    },
+    {
+      "name": "Mighty Ryan Gold",
+      "matricNumber": "20/3003",
+      "password": "student789",
+      "department": "Computer Science",
+      "course": "B.Eng. Computer Science",
+      "gender": "Male",
+      "phoneNumber": "9876543210",
+      "dateOfBirth": "1999-02-20",
+      "monthOfGraduation": "July",
+      "clearanceRequest": "true",
+      "HOD-approval": "true",
+      "BURSARY-approval": "true",
+      "LIBRARY-approval": "false",
+      "BOOKSHOP-approval": "false",
+      "EGWHITE-approval": "false",
+      "BUTH-approval": "false",
       "ALUMNI-approval": "false",
       "SECURITY-approval": "false",
       "VPSD-approval": "false",
+      "REGISTRY-approval": "false",
       "message": "no messages",
-      "id": "27a0"
+      "id": "27a3"
     }
   ],
   "admins": [
@@ -104,6 +130,13 @@
       "fullName": "Vice President - Student Affairs Administrator",
       "department": "VPSD",
       "id": "224f"
+    },
+    {
+      "username": "registry",
+      "password": "registryadmin",
+      "fullName": "Registrar",
+      "department": "registry",
+      "id": "238v"
     }
   ],
   "hods": [

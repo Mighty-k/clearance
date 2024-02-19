@@ -42,6 +42,10 @@ const Login = () => {
   
       if (userData.length === 1) {
         if (userData[0].password === password) {
+          // Store user data in local storage with a prefix based on user type
+          const userTypePrefix = isMatricNumber ? 'student_' : username.startsWith('hod_') ? 'hod_' : 'admin_';
+          localStorage.setItem(`${userTypePrefix}loginData`, JSON.stringify(userData[0]));
+          
           // Store student data in local storage
           localStorage.setItem('loginData', JSON.stringify(userData[0]));
           if (isMatricNumber) {

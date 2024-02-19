@@ -6,7 +6,7 @@ import Auth from "../login/Auth";
 
 const Hod = () => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const hod = JSON.parse(localStorage.getItem("loginData"));
+  const hod = JSON.parse(localStorage.getItem("hod_loginData"));
   const [students, setStudents] = useState([]);
   const [approved, setApproved] = useState([]);
   const [rejected, setRejected] = useState([]); // State for rejected students
@@ -16,7 +16,7 @@ const Hod = () => {
   const handleHover = () => setIsExpanded(true);
   const handleLeave = () => setIsExpanded(false);
   const handleLogout = () => {
-    localStorage.removeItem('loginData');
+    localStorage.removeItem('hod_loginData');
     navigate('/login');
   };
 
@@ -102,7 +102,7 @@ const Hod = () => {
               <div className="cardd-left">
               <p className="cardd-text" id="admin">
                   <span className="fn">Name:</span>  {hod.fullName}<br />
-                  <span className="dept">Department:</span>  {hod.department}<br />
+                  <span className="dept">Department:</span>HOD {hod.department}<br />
                 </p>
               </div>
         </div>
@@ -141,28 +141,6 @@ const Hod = () => {
           </table>
         </div>
         <hr />
-        <div className="row clr-aprv">
-          <h2 className="text-left">Approved Clearance</h2>
-          <table className="table table-striped table-hover">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Department</th>
-                <th>Matric number</th>
-              </tr>
-            </thead>
-            <tbody>
-              {approved.map((student) => (
-                <tr key={student.id}>
-                  <td>{student.name}</td>
-                  <td>{student.department}</td>
-                  <td>{student.matricNumber}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <hr />
         <div className="row clr-rejected">
           <h2 className="text-left">Rejected Clearance</h2>
           <table className="table table-striped table-hover">
@@ -188,6 +166,29 @@ const Hod = () => {
             </tbody>
           </table>
         </div>
+        <hr />
+        <div className="row clr-aprv">
+          <h2 className="text-left">Approved Clearance</h2>
+          <table className="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Matric number</th>
+              </tr>
+            </thead>
+            <tbody>
+              {approved.map((student) => (
+                <tr key={student.id}>
+                  <td>{student.name}</td>
+                  <td>{student.department}</td>
+                  <td>{student.matricNumber}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      
     </div>
   );
 };
