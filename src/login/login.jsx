@@ -28,12 +28,12 @@ const Login = () => {
       let endpoint;
   
       if (isMatricNumber) {
-        endpoint = `/students?matricNumber=${username}`;
+        endpoint = `https://clearance-database.onrender.com/students?matricNumber=${username}`;
       } else {
         if (username.startsWith('hod_')) {
-          endpoint = `/hods?username=${username}`;
+          endpoint = `https://clearance-database.onrender.com/hods?username=${username}`;
         } else {
-          endpoint = `/admins?username=${username}`;
+          endpoint = `https://clearance-database.onrender.com/admins?username=${username}`;
         }
       }
   

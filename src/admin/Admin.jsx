@@ -57,7 +57,7 @@ const Admin = () => {
         }
         // Convert boolean values to string
         queryParams = queryParams.replace(/true/g, "true").replace(/false/g, "false");
-        const response = await axios.get(`/students?${queryParams}`);
+        const response = await axios.get(`https://clearance-database.onrender.com/students?${queryParams}`);
         const students = response.data;
         // Separate students into approved, pending approval, and rejected
         const approvedStudents = students.filter(student => student[`${admin.username.toUpperCase()}-approval`] === "true");
@@ -76,7 +76,7 @@ const Admin = () => {
   
   const handleApprove = (student) => {
     axios
-      .patch(`/students/${student.id}`, {
+      .patch(`https://clearance-database.onrender.com/students/${student.id}`, {
         [`${admin.username.toUpperCase()}-approval`]: "true",
         "message": "no messages", 
       })
@@ -96,7 +96,7 @@ const Admin = () => {
     );
     if (message) {
       axios
-        .patch(`/students/${student.id}`, {
+        .patch(`https://clearance-database.onrender.com/students/${student.id}`, {
           [`${admin.username.toUpperCase()}-approval`]: "rejected", // Change status to "rejected"
           message: message + ` please see your ${admin.fullName}`, // Add rejection message with admin's name
         })
