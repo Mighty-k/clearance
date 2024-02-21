@@ -18,7 +18,7 @@ const StudentDashboard = () => {
 
   const handleRequestClearance = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/students/${student.id}`, {
+      const response = await fetch(`/students/${student.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ const StudentDashboard = () => {
     // Fetch student data dynamically
     const fetchStudentData = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/students/${storedStudentData.id}`);
+        const response = await fetch(`/students/${storedStudentData.id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch student data');
         }

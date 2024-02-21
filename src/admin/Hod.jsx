@@ -22,7 +22,7 @@ const Hod = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/students?clearanceRequest=true&department=${hod.department}`)
+      .get(`/students?clearanceRequest=true&department=${hod.department}`)
       .then((res) => {
         setStudents(res.data);
       })
@@ -40,7 +40,7 @@ const Hod = () => {
 
   const handleApprove = (student) => {
     axios
-      .patch(`http://localhost:3000/students/${student.id}`, {
+      .patch(`/students/${student.id}`, {
         "HOD-approval": "true",
         "message": "no messages", 
       })
@@ -58,7 +58,7 @@ const Hod = () => {
     if (message) {
       setRejectMessage(message);
       axios
-        .patch(`http://localhost:3000/students/${student.id}`, {
+        .patch(`/students/${student.id}`, {
           "HOD-approval": "rejected",
           "message": message + ` - Rejected by HOD`,
         })

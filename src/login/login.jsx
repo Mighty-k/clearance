@@ -28,12 +28,12 @@ const Login = () => {
       let endpoint;
   
       if (isMatricNumber) {
-        endpoint = `http://localhost:3000/students?matricNumber=${username}`;
+        endpoint = `/students?matricNumber=${username}`;
       } else {
         if (username.startsWith('hod_')) {
-          endpoint = `http://localhost:3000/hods?username=${username}`;
+          endpoint = `/hods?username=${username}`;
         } else {
-          endpoint = `http://localhost:3000/admins?username=${username}`;
+          endpoint = `/admins?username=${username}`;
         }
       }
   
