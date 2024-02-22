@@ -57,14 +57,22 @@ const Admin = () => {
         }
         // Convert boolean values to string
         queryParams = queryParams.replace(/true/g, "true").replace(/false/g, "false");
-        const response = await axios.get(`https://clearance-database.onrender.com/students?${queryParams}`);
-        const students = response.data;
-        // Separate students into approved, pending approval, and rejected
-        const approvedStudents = students.filter(student => student[`${admin.username.toUpperCase()}-approval`] === "true");
-        const pendingStudents = students.filter(student => student[`${admin.username.toUpperCase()}-approval`] !== "true" && student[`${admin.username.toUpperCase()}-approval`] !== "rejected");
-        const rejectedStudents = students.filter(student => student[`${admin.username.toUpperCase()}-approval`] === "rejected");
+        const response = await axios.get(`http://localhost:3000/students?${queryParams}`);
+        const allStudents = response.data; // Assuming students are directly under the "data" property
+        const filteredStudents = allStudents.filter((student) => {
+          return student[`${admin.username.toUpperCase()}-approval`] === "false";
+        });
+
+        const approvedStudents = allStudents.filter((student) => {
+          return student[`${admin.username.toUpperCase()}-approval`] === "true";
+        });
+
+        const rejectedStudents = allStudents.filter((student) => {
+          return student[`${admin.username.toUpperCase()}-approval`] === "rejected";
+        });
+
+        setStudents(filteredStudents);
         setApproved(approvedStudents);
-        setStudents(pendingStudents);
         setRejected(rejectedStudents);
       } catch (error) {
         console.error(error);
@@ -76,7 +84,7 @@ const Admin = () => {
   
   const handleApprove = (student) => {
     axios
-      .patch(`https://clearance-database.onrender.com/students/${student.id}`, {
+      .patch(`http://localhost:3000/students/${student.id}`, {
         [`${admin.username.toUpperCase()}-approval`]: "true",
         "message": "no messages", 
       })
@@ -96,7 +104,7 @@ const Admin = () => {
     );
     if (message) {
       axios
-        .patch(`https://clearance-database.onrender.com/students/${student.id}`, {
+        .patch(`http://localhost:3000/students/${student.id}`, {
           [`${admin.username.toUpperCase()}-approval`]: "rejected", // Change status to "rejected"
           message: message + ` please see your ${admin.fullName}`, // Add rejection message with admin's name
         })
@@ -162,9 +170,7 @@ const Admin = () => {
             </tr>
           </thead>
           <tbody>
-          {students
-            .filter(student => student[`${admin.username.toUpperCase()}-approval`] === "false")
-            .map(student => (
+            {students.map((student) => (
               <tr key={student.id}>
                 <td>{student.name}</td>
                 <td>{student.department}</td>
@@ -185,7 +191,7 @@ const Admin = () => {
                 </td>
               </tr>
             ))}
-        </tbody>
+          </tbody>
         </table>
       </div>
       <hr />
