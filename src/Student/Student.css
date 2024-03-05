@@ -29,11 +29,16 @@
   margin-left: 10%;
   /* text-align: left; */
 }
+
+
 body{
- background-color: rgb(198, 216, 255)!important;
-  scroll-behavior: smooth !important;
+  background-image:url(src/img/babcockuniversity.jpg) !important;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+    scroll-behavior: smooth !important;
   transition: all 0.5s!important;
-  padding: 0% !important;
+  padding: 0% !important; 
 }
 
 .profile{
@@ -46,7 +51,7 @@ body{
   border: none;
   border-radius: 12px;
   padding: 4%;
-  background: rgb(40,87,169);
+  background: rgba(40, 87, 169, 0.874);
   /* background: linear-gradient(90deg, rgba(157,135,232,1) 0%, rgba(191,168,236,1) 7%, rgba(33,48,91,1) 100%, rgba(0,3,36,0.7833508403361344) 100%); */
   color: #fff;
 }
@@ -93,7 +98,7 @@ body{
     border-radius: 50%;  /* Make the button circular */
     width: 150px;         /* Set the width of the button */
     height: 150px;        /* Set the height of the button */
-    background-color: #217753;  /* Set the background color */
+    background-color: #217753ac;  /* Set the background color */
     color: #fff;           /* Set the text color */
     font-size: 16px;       /* Set the font size */
 }
@@ -112,7 +117,7 @@ body{
   width:100% ;
   margin-top: 5%;
   border-radius: 12px;
-  background-color: rgb(104, 179, 208) !important;
+  background-color: rgba(104, 179, 208, 0.874) !important;
   padding: 0%;
   /* background: linear-gradient(90deg, rgba(59,179,230,1) 0%, rgba(37,61,246,1) 100%, rgba(0,3,36,0.7833508403361344) 100%); */
 }
@@ -150,19 +155,22 @@ body{
   display: flex;
   width: 100%;
   color: #fff;
-  /* color: rgb(90, 219, 21);
-  color:rgb(255, 237, 42); */
+  color: #b61e1e;
 }
 .graph {
   flex: 2;
-  background:rgb(103, 152, 227);
+  background:rgb(103, 152, 227,0.874);
   padding: 20px;
   margin: 10px;
   border-radius: 15px;
 }
+.doughnut{
+  width: 450px !important;
+  height: 450px !important ;
+}
 .notification {
   flex: 1;
-  background: rgb(4, 144, 127);
+  background: rgb(4, 144, 127,0.874);
   /* background: linear-gradient(90deg, rgba(161,230,59,1) 0%, rgba(230,64,64,1) 0%, rgba(246,224,37,1) 100%, rgba(0,3,36,0.7833508403361344) 100%); */
   padding: 20px;
   margin: 10px;

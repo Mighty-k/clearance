@@ -1,101 +1,82 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation  } from 'react-router-dom';
 import axios from "axios";
 import "./admin.css";
 
 const Admin = () => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const admin = JSON.parse(localStorage.getItem("admin_loginData"));
+ 
   const [students, setStudents] = useState([]);
   const [approved, setApproved] = useState([]);
   const [rejected, setRejected] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
+  const admin = location.state?.admin;
 
   const handleHover = () => setIsExpanded(true);
   const handleLeave = () => setIsExpanded(false);
-  const handleLogout = () => {
-    localStorage.removeItem("admin_loginData");
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      await axios.get('http://localhost:3001/logout'); // Send a request to clear the session on the server-side
+      navigate('/login'); // Redirect to the login page
+    } catch (error) {
+      console.error('Logout failed:', error);
+      // Handle logout failure
+    }
   };
 
   useEffect(() => {
-    if (!admin) return;
+    if (!admin){
+      navigate('/login');
+      return;
+    } 
   
     const getStudents = async () => {
       try {
-        let queryParams = `clearanceRequest=true&${admin.username.toUpperCase()}-approval=false&${admin.username.toUpperCase()}-approval=rejected`; // Include rejected status
-        switch (admin.username.toUpperCase()) {
-          case "BURSARY":
-            queryParams += "&HOD-approval=true";
-            break;
-          case "LIBRARY":
-            queryParams += "&BURSARY-approval=true";
-            break;
-          case "BOOKSHOP":
-            queryParams += "&LIBRARY-approval=true";
-            break;
-          case "EGWHITE":
-            queryParams += "&BOOKSHP-approval";
-            break;
-          case "BUTH":
-            queryParams += "&EGWHITE-approval=true";
-            break;
-          case "ALUMNI":
-            queryParams += "&BUTH-approval=true";
-            break;
-          case "SECURITY":
-            queryParams += "&ALUMNI-approval=true";
-            break;
-          case "VPSD":
-            queryParams += "&SECURITY-approval=true";
-            break;
-          case "REGISTRY":
-            queryParams += "&VPSD-approval=true";
-            break;
-          default:
-            break;
-        }
-        // Convert boolean values to string
-        queryParams = queryParams.replace(/true/g, "true").replace(/false/g, "false");
-        const response = await axios.get(`https://clearance-database.onrender.com/students?${queryParams}`);
-        const allStudents = response.data; // Assuming students are directly under the "data" property
-        const filteredStudents = allStudents.filter((student) => {
-          return student[`${admin.username.toUpperCase()}-approval`] === "false";
-        });
-
-        const approvedStudents = allStudents.filter((student) => {
-          return student[`${admin.username.toUpperCase()}-approval`] === "true";
-        });
-
-        const rejectedStudents = allStudents.filter((student) => {
-          return student[`${admin.username.toUpperCase()}-approval`] === "rejected";
-        });
-
-        setStudents(filteredStudents);
+        const queryParams = {
+          clearanceRequest: true,
+          adminUsername: admin.username
+        };
+        const response = await axios.get(`http://localhost:3001/students`, { params: queryParams });  
+        const allStudents = response.data;
+        
+        // Filter students based on different approval statuses
+        const pendingStudents = allStudents.filter(student => student[`${admin.username.toUpperCase()}-approval`] === "pending");
+        console.log('pending students: ', pendingStudents);
+        const approvedStudents = allStudents.filter(student => student[`${admin.username.toUpperCase()}-approval`] === "approved");
+        console.log('approved students: ', approvedStudents);
+        const rejectedStudents = allStudents.filter(student => student[`${admin.username.toUpperCase()}-approval`] === "rejected");
+        console.log('rejected students: ', rejectedStudents);
+    
+        // Set state variables for each category of students
+        setStudents(pendingStudents);
         setApproved(approvedStudents);
         setRejected(rejectedStudents);
       } catch (error) {
         console.error(error);
       }
     };
+    
   
     getStudents();
   }, [admin]);
   
   const handleApprove = (student) => {
     axios
-      .patch(`https://clearance-database.onrender.com/students/${student.id}`, {
-        [`${admin.username.toUpperCase()}-approval`]: "true",
-        "message": "no messages", 
+      .patch(`http://localhost:3001/students/${student.id}`, {
+        [`${admin.username.toUpperCase()}-approval`]: "approved",
+        message: "no messages", 
       })
       .then(() => {
-        setStudents((prevStudents) => prevStudents.filter((s) => s.id !== student.id));
-        setApproved((prevApproved) => [...prevApproved, student]);
+        setRejected((prevRejected) => prevRejected.filter((s) => s.id !== student.id)); // Remove student from rejected list
+        setStudents((prevStudents) => prevStudents.filter((s) => s.id !== student.id)); // Remove student from pending list
+        setApproved((prevApproved) => [...prevApproved, student]); // Add student to approved list
       })
       .catch((err) => {
-        console.error(err);
+        console.error("Error fetching students:", err);
       });
   };
+  
 
   const handleReject = (student) => {
     const message = prompt(
@@ -104,9 +85,9 @@ const Admin = () => {
     );
     if (message) {
       axios
-        .patch(`https://clearance-database.onrender.com/students/${student.id}`, {
+        .patch(`http://localhost:3001/students/${student.id}`, {
           [`${admin.username.toUpperCase()}-approval`]: "rejected", // Change status to "rejected"
-          message: message + ` please see your ${admin.fullName}`, // Add rejection message with admin's name
+          message: message + ` - KINDLY MEET THE ${admin.fullName} FOR MORE INFORMATION`, // Add rejection message with admin's name
         })
         .then(() => {
           setStudents((prevStudents) => prevStudents.filter((s) => s.id !== student.id));
@@ -157,7 +138,8 @@ const Admin = () => {
           </div>
         </div>
       </div>
-      {/* clearance request */}
+      <div className="request-container">
+         {/* clearance request */}
       <div className="row clr-reqs">
         <h2 className="text-left">Clearance Requests</h2>
         <table className="table table-striped table-hover">
@@ -245,6 +227,8 @@ const Admin = () => {
             </tbody>
           </table>
         </div>
+      </div>
+     
     </div>
   );
 };

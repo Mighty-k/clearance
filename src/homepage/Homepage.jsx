@@ -4,8 +4,8 @@ import './Homepage.css'
 const Homepage = () => {
   
   return (
-    <div className="container-fluid d-flex flex-wrap justify-content-center align-items-center p-5 background">
-    <div className="row rounded bg-light shadow-lg p-5">
+    <div className="  container-fluid d-flex flex-wrap justify-content-center align-items-center p-5 background">
+    <div className="row rounded homepage bg-light shadow-lg p-5">
       <div className="col-md-6 text-center">
         <h1 className="display-4 fw-bold">Final Clearance made easy</h1>
         <p className="lead">Streamline your final year clearance process.</p>

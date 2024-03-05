@@ -53,7 +53,7 @@ function Clearance() {
           <thead>
             <tr>
               <th>CLEARING OFFICER</th>
-              <th>SIGNATURE</th>
+              <th>APPROVAL STATUS</th>
               <th>DATE</th>
             </tr>
           </thead>

@@ -1,83 +1,70 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './login.css';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [student, setStudent] = useState({});
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Add state for login status
   const [message, setMessage] = useState('');
   const [isShaking, setIsShaking] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (localStorage.getItem('loginData')) {
-      // Check for existing login state in local storage
-      setStudent(JSON.parse(localStorage.getItem('loginData'))); // Set student directly
-    setIsLoggedIn(true);
-    }
-  }, [navigate]);
-
   const handleLogin = async (e) => {
     e.preventDefault();
   
     try {
-      const isMatricNumber = /^\d{2}\/\d{4}$/.test(username);
-      let userData;
-      let endpoint;
+      const response = await axios.post('http://localhost:3001/login', { username, password });
+      console.log('Login successful');
+      const { dashboard, user } = response.data;
+      console.log(response.data);
   
-      if (isMatricNumber) {
-        endpoint = `https://clearance-database.onrender.com/students?matricNumber=${username}`;
+      // Redirect user to the appropriate dashboard based on role
+      if (dashboard === 'student') {
+        navigate('/student', { state: { student: user } });
+      } else if (dashboard === 'admin') {
+        navigate('/admin', { state: { admin: user } });
+      } else if (dashboard === 'hod') {
+        navigate('/hod', { state: { hod: user } });
       } else {
-        if (username.startsWith('hod_')) {
-          endpoint = `https://clearance-database.onrender.com/hods?username=${username}`;
-        } else {
-          endpoint = `https://clearance-database.onrender.com/admins?username=${username}`;
-        }
-      }
-  
-      const response = await fetch(endpoint);
-      userData = await response.json();
-  
-      if (userData.length === 1) {
-        if (userData[0].password === password) {
-          // Store user data in local storage with a prefix based on user type
-          const userTypePrefix = isMatricNumber ? 'student_' : username.startsWith('hod_') ? 'hod_' : 'admin_';
-          localStorage.setItem(`${userTypePrefix}loginData`, JSON.stringify(userData[0]));
-          
-          // Store student data in local storage
-          localStorage.setItem('loginData', JSON.stringify(userData[0]));
-          if (isMatricNumber) {
-            navigate('/student-dashboard', { state: userData[0] });
-          } else if (username.startsWith('hod_')) {
-            navigate('/hod', { state: userData[0] });
-          } else {
-            navigate('/admin', { state: userData[0] });
-          }
-        } else {
-          // Display error message instead of logging to console
-          setIsLoggedIn(false); // Update state for error display
-          setMessage('Invalid username/password!');
-          setIsShaking(true)
-        }
-      } else {
-        // Display error message if username not found
-        setIsLoggedIn(false); // Update state for error display
-        setMessage('Invalid username/password!');
-        setIsShaking(true)
+        console.error('Unauthorized');
       }
     } catch (error) {
       console.error('Error logging in:', error);
-      setMessage('An error occurred. Please try again later.');
+      if (error.response && error.response.status === 401) {
+        // Invalid credentials
+        setIsLoggedIn(false);
+        setMessage('Invalid username/password!');
+        setIsShaking(true);
+      } else {
+        // Other errors
+        setIsShaking(true);
+        setMessage('An error occurred on the server. Please try again later.');
+      }
     }
   };
-  useEffect( () => {
-    if(isShaking){
-      setTimeout(() => {
-        setIsShaking(false);
-      }, 500)
+  useEffect(() => {
+    let shakeTimeoutId;
+    let messageTimeoutId;
+  
+    if (isShaking) {
+      shakeTimeoutId = setTimeout(() => {
+        setIsShaking(false); // Set isShaking to false 
+      }, 700); // 0.7 second
+  
+      // Set a timeout to clear the message 
+      messageTimeoutId = setTimeout(() => {
+        setMessage('');
+      }, 1000); // 1 second
     }
+  
+    // Cleanup function to clear the timeouts if the component unmounts or is updated
+    return () => {
+      clearTimeout(messageTimeoutId);
+      clearTimeout(shakeTimeoutId);
+      
+    };
   }, [isShaking]
   )
     

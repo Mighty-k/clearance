@@ -1,16 +1,19 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate, useLocation  } from 'react-router-dom';
 import Chart from 'chart.js/auto';
+import { Doughnut } from 'react-chartjs-2';
+import axios from "axios";
 import './Student.css';
-import Auth from '../login/Auth';
 
 const StudentDashboard = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [student, setStudent] = useState({});
   const [isRequestButtonVisible, setIsRequestButtonVisible] = useState(true);
-  const [chartInstance, setChartInstance] = useState(null);
+  // const [chartInstance, setChartInstance] = useState(null);
   const [departments, setDepartments] = useState([]);
-
+  const [chartData, setChartData] = useState(null);
+  // const canvasRef = useRef(null);
+  const location = useLocation(); 
   const navigate = useNavigate();
 
   const handleHover = () => setIsExpanded(true);
@@ -18,7 +21,7 @@ const StudentDashboard = () => {
 
   const handleRequestClearance = async () => {
     try {
-      const response = await fetch(`https://clearance-database.onrender.com/students/${student.id}`, {
+      const response = await fetch(`http://localhost:3001/students/${student.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -41,92 +44,119 @@ const StudentDashboard = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('loginData');
-    navigate('/');
+  const handleLogout = async () => {
+    try {
+      await axios.get('http://localhost:3001/logout'); // Send a request to clear the session on the server-side
+      navigate('/login'); // Redirect to the login page
+    } catch (error) {
+      console.error('Logout failed:', error);
+      // Handle logout failure
+    }
   };
+  
 
   useEffect(() => {
-    const storedStudentData = JSON.parse(localStorage.getItem('student_loginData'));
-    if (!storedStudentData) {
-      navigate('/login'); // Redirect to login page if user data is not available
-      return;
-    }
+    const Student_Data = location.state?.student;
+  // console.log(Student_Data);
+  if (!Student_Data) {
+    navigate('/login'); // Redirect to login page if user data is not available
+    return;
+  }
 
-    setStudent(storedStudentData);
-
-    // Fetch student data dynamically
-    const fetchStudentData = async () => {
-      try {
-        const response = await fetch(`https://clearance-database.onrender.com/students/${storedStudentData.id}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch student data');
-        }
-        const studentData = await response.json();
-        setStudent(studentData);
-
-        // Process department approval data
-        const formattedDepartments = Object.entries(studentData)
-          .filter(([key, value]) => key.endsWith('-approval'))
-          .map(([department, adminApproval]) => ({
-            name: department.slice(0, -9),
-            approvalStatus: adminApproval === "true" ? "Approved" : adminApproval === "rejected" ? "Rejected" : "Pending",
-          }));
-
-        setDepartments(formattedDepartments);
-        renderCircularChart(formattedDepartments);
-      } catch (error) {
-        console.error('Error fetching student data:', error);
-        // Handle error: Display appropriate message to the user
+  // Fetch student data dynamically
+  const fetchStudentData = async () => {
+    try {
+      const response = await fetch(`http://localhost:3001/students/${Student_Data.id}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch student data');
       }
-    };
-
-    fetchStudentData(); // Fetch data and process it for the dynamic chart
-  }, []);
-
-  const renderCircularChart = (departmentsData) => {
-    const approvedCount = departmentsData.filter(department => department.approvalStatus === "Approved").length;
-    const rejectedCount = departmentsData.filter(department => department.approvalStatus === "Rejected").length;
-    const pendingCount = departmentsData.length - approvedCount - rejectedCount;
-
-    if (chartInstance) {
-      chartInstance.destroy(); // Properly destroy the chart before creating a new one
-    }
-
-    const ctx = document.getElementById('chart').getContext('2d');
-    const newChart = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Approved', 'Rejected', 'Pending'],
-        datasets: [{
-          label: 'Clearance Status',
-          data: [approvedCount, rejectedCount, pendingCount],
-          backgroundColor: [
-            'rgb(90, 219, 21)',
-            'rgb(255, 99, 132)',
-            'rgb(255, 237, 42)'
-          ],
-          borderWidth: 0
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          title: {
-            display: true,
-            text: 'Clearance Status'
+      const studentData = await response.json();
+  
+      // Process department approval data
+      const formattedDepartments = Object.entries(studentData)
+        .filter(([key, value]) => key.endsWith('-approval'))
+        .map(([department, adminApproval]) => ({
+          name: department.slice(0, -9),
+          approvalStatus: adminApproval === "approved" ? "Approved" : adminApproval === "rejected" ? "Rejected" : "Pending",
+        }));
+  
+      setStudent(studentData);
+      setDepartments(formattedDepartments);
+  
+      // Generate doughnut chart data
+      const { approved, pending, rejected } = countApprovalStatus(Object.values(studentData));
+      const chartData = {
+        labels: ['Approved', 'Pending', 'Rejected'],
+        datasets: [
+          {
+            data: [approved, pending, rejected],
+            backgroundColor: ['#1ef506', '#f5ed06', '#b61e1e'],
+            hoverBackgroundColor: ['#1ef506', '#f5ed06', '#b61e1e'],
           },
-          legend: {
-            display: true,
-            position: 'bottom'
-          }
-        }
+        ],
+      };
+
+      setChartData(chartData);
+
+
+  
+    } catch (error) {
+      console.error('Error fetching student data:', error);
+      // Handle error: Display appropriate message to the user
+    }
+  };
+  
+  
+  // Function to count approval status
+  const countApprovalStatus = (approvalArray) => {
+    let approved = 0;
+    let pending = 0;
+    let rejected = 0;
+  
+    approvalArray.forEach((status) => {
+      switch (status) {
+        case 'approved':
+          approved++;
+          break;
+        case 'pending':
+          pending++;
+          break;
+        case 'rejected':
+          rejected++;
+          break;
+        default:
+          break;
       }
     });
-
-    setChartInstance(newChart);
+  
+    return { approved, pending, rejected };
   };
+    
+  fetchStudentData(); // Fetch data and process it for the dynamic chart
+}, [location.state?.student]);
+
+const options = {
+  plugins: {
+    legend: {
+      display: true,
+      position: 'right'
+    }
+  },
+  elements: {
+    arc: {
+      borderColor: 'transparent' // Set border color to transparent
+    }
+  }
+};
+
+// useEffect(() => {
+//   if (departments.length > 0) {
+//     renderCircularChart(departments);
+//   }
+// }, [departments]);
+
+
+
 
   return (
     <div className="container-fluid das-body ">
@@ -215,7 +245,7 @@ const StudentDashboard = () => {
                   <div className="graph">
                     <h5 className="card-title">Graph</h5>
                     <div className="container dashboard ">
-                      <canvas id="chart" width="400" height="400"></canvas>
+                    <Doughnut className='doughnut' data={chartData} options={options} /> 
                     </div>
                   </div>
                   <div className="notification">

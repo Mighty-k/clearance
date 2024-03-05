@@ -2,12 +2,22 @@
   height: 100vh;
 }
 
+.homepage{
+  background-image:url(./src/img/babcock-students.jpeg);
+  background-repeat: no-repeat;
+  background-size:cover;
+}
 .bg-light {
-  opacity: 0.8;
+  opacity: 0.1;
+ 
 }
 
 h1 {
   font-family: Arial, sans-serif;
+  color: rgb(61, 91, 160) !important;
+}
+p.lead{
+  color: rgb(1, 4, 25) !important;
 }
 
 ul {

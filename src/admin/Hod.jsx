@@ -1,38 +1,52 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from "axios";
 import "./admin.css";
-import Auth from "../login/Auth";
 
 const Hod = () => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const hod = JSON.parse(localStorage.getItem("hod_loginData"));
+ 
   const [students, setStudents] = useState([]);
   const [approved, setApproved] = useState([]);
   const [rejected, setRejected] = useState([]); // State for rejected students
   const [rejectMessage, setRejectMessage] = useState(""); // State for reject message
   const navigate = useNavigate();
+  const location = useLocation();
+  const hod = location.state?.hod;
 
   const handleHover = () => setIsExpanded(true);
   const handleLeave = () => setIsExpanded(false);
-  const handleLogout = () => {
-    localStorage.removeItem('hod_loginData');
-    navigate('/login');
+  const handleLogout = async () => {
+    try {
+      await axios.get('http://localhost:3001/logout'); // Send a request to clear the session on the server-side
+      navigate('/login'); // Redirect to the login page
+    } catch (error) {
+      console.error('Logout failed:', error);
+      // Handle logout failure
+    }
   };
 
+   
+
   useEffect(() => {
+    if (!hod){
+      navigate('/login');
+      return;
+    } 
     axios
-      .get(`https://clearance-database.onrender.com/students?clearanceRequest=true&department=${hod.department}`)
+      .get(`http://localhost:3001/students?clearanceRequest=true&department=${hod.department}`)
       .then((res) => {
         setStudents(res.data);
       })
       .catch((err) => {
-        console.error(err);
+        console.error('Error fetching students:', err);
+        // Handle error: Display appropriate message to the user
       });
+
   }, [hod]);  
 
   useEffect(() => {
-    const filteredApproved = students.filter(student => student['HOD-approval'] === "true");
+    const filteredApproved = students.filter(student => student['HOD-approval'] === "approved");
     const filteredRejected = students.filter(student => student['HOD-approval'] === "rejected"); // Filter out rejected students
     setApproved(filteredApproved);
     setRejected(filteredRejected);
@@ -40,31 +54,34 @@ const Hod = () => {
 
   const handleApprove = (student) => {
     axios
-      .patch(`https://clearance-database.onrender.com/students/${student.id}`, {
-        "HOD-approval": "true",
+      .patch(`http://localhost:3001/students/${student.id}`, {
+        "HOD-approval": "approved",
         "message": "no messages", 
       })
       .then((res) => {
-        setStudents(students.filter((s) => s.id !== student.id));
-        setApproved([...approved, student]);
+        setRejected((prevRejected) => prevRejected.filter((s) => s.id !== student.id)); // Remove student from rejected list
+        setStudents((prevStudents) => prevStudents.filter((s) => s.id !== student.id)); // Remove student from pending list
+        setApproved((prevApproved) => [...prevApproved, student]); // Add student to approved list
       })
       .catch((err) => {
-        console.error(err);
+        console.error("Error fetching students:",err);
       });
   };
 
   const handleReject = (student) => {
-    const message = prompt("Please enter a message to the rejected student:", "Sorry, your request has been rejected because ...");
+    const message = prompt(
+    "Please enter a message to the rejected student:",
+    "Sorry, your request has been rejected because ");
     if (message) {
       setRejectMessage(message);
       axios
-        .patch(`https://clearance-database.onrender.com/students/${student.id}`, {
+        .patch(`http://localhost:3001/students/${student.id}`, {
           "HOD-approval": "rejected",
-          "message": message + ` - Rejected by HOD`,
+          "message": message + ` - KINDLY MEET THE HOD FOR MORE INFORMATION`,
         })
         .then((res) => {
-          setStudents(students.filter((s) => s.id !== student.id));
-          setRejected([...rejected, { ...student, message }]); // Add rejected student with rejection message to state
+          setStudents((prevStudents) => prevStudents.filter((s) => s.id !== student.id));
+          setRejected((prevRejected) => [...prevRejected, { ...student, message }]); // Add to rejected list with rejection message
         })
         .catch((err) => {
           console.error(err);
@@ -121,7 +138,7 @@ const Hod = () => {
             </thead>
             <tbody>
             {students
-              .filter(student => student['HOD-approval'] === "false") // Filter out students with HOD-approval set to true
+              .filter(student => student['HOD-approval'] === "pending") // Filter out students with HOD-approval set to true
               .map((student) => (
                 <tr key={student.id}>
                   <td>{student.name}</td>
