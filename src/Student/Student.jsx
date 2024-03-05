@@ -21,7 +21,7 @@ const StudentDashboard = () => {
 
   const handleRequestClearance = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/students/${student.id}`, {
+      const response = await fetch(`https://clearance-database.onrender.com/students/${student.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ const StudentDashboard = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.get('http://localhost:3001/logout'); // Send a request to clear the session on the server-side
+      await axios.get('https://clearance-database.onrender.com/logout'); // Send a request to clear the session on the server-side
       navigate('/login'); // Redirect to the login page
     } catch (error) {
       console.error('Logout failed:', error);
@@ -66,7 +66,7 @@ const StudentDashboard = () => {
   // Fetch student data dynamically
   const fetchStudentData = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/students/${Student_Data.id}`);
+      const response = await fetch(`https://clearance-database.onrender.com/students/${Student_Data.id}`);
       if (!response.ok) {
         throw new Error('Failed to fetch student data');
       }

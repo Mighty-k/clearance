@@ -18,7 +18,7 @@ const Hod = () => {
   const handleLeave = () => setIsExpanded(false);
   const handleLogout = async () => {
     try {
-      await axios.get('http://localhost:3001/logout'); // Send a request to clear the session on the server-side
+      await axios.get('https://clearance-database.onrender.com/logout'); // Send a request to clear the session on the server-side
       navigate('/login'); // Redirect to the login page
     } catch (error) {
       console.error('Logout failed:', error);
@@ -34,7 +34,7 @@ const Hod = () => {
       return;
     } 
     axios
-      .get(`http://localhost:3001/students?clearanceRequest=true&department=${hod.department}`)
+      .get(`https://clearance-database.onrender.com/students?clearanceRequest=true&department=${hod.department}`)
       .then((res) => {
         setStudents(res.data);
       })
@@ -54,7 +54,7 @@ const Hod = () => {
 
   const handleApprove = (student) => {
     axios
-      .patch(`http://localhost:3001/students/${student.id}`, {
+      .patch(`https://clearance-database.onrender.com/students/${student.id}`, {
         "HOD-approval": "approved",
         "message": "no messages", 
       })
@@ -75,7 +75,7 @@ const Hod = () => {
     if (message) {
       setRejectMessage(message);
       axios
-        .patch(`http://localhost:3001/students/${student.id}`, {
+        .patch(`https://clearance-database.onrender.com/students/${student.id}`, {
           "HOD-approval": "rejected",
           "message": message + ` - KINDLY MEET THE HOD FOR MORE INFORMATION`,
         })
@@ -125,7 +125,8 @@ const Hod = () => {
         </div>
       </div>
       </div>
-        <div className="row clr-reqs">
+      <div className="request-container">
+      <div className="row clr-reqs">
           <h2 className="text-left">Clearance Requests</h2>
           <table className="table table-striped table-hover">
             <thead>
@@ -205,6 +206,8 @@ const Hod = () => {
             </tbody>
           </table>
         </div>
+      </div>
+        
       
     </div>
   );
