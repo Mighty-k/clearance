@@ -17,7 +17,7 @@ const Admin = () => {
   const handleLeave = () => setIsExpanded(false);
   const handleLogout = async () => {
     try {
-      await axios.get('http://localhost:3001/logout');
+      await axios.get('https://clearance-database.onrender.com/logout');
       navigate('/login');
     } catch (error) {
       console.error('Logout failed:', error);
@@ -36,7 +36,7 @@ const Admin = () => {
           clearanceRequest: true,
           adminUsername: admin.username
         };
-        const response = await axios.get(`http://localhost:3001/filteredStudents`, { params: queryParams });
+        const response = await axios.get(`https://clearance-database.onrender.com/filteredStudents`, { params: queryParams });
         const allStudents = response.data;
         console.log("filtered: ",response.data);
         const pendingStudents = allStudents.filter(student => student[`${admin.username.toUpperCase()}-approval`] === "pending");
@@ -56,7 +56,7 @@ const Admin = () => {
 
   const handleApprove = (student) => {
     axios
-      .patch(`http://localhost:3001/students/${student.id}`, {
+      .patch(`https://clearance-database.onrender.com/students/${student.id}`, {
         [`${admin.username.toUpperCase()}-approval`]: "approved",
         message: "no messages", 
       })
@@ -77,7 +77,7 @@ const Admin = () => {
     );
     if (message) {
       axios
-        .patch(`http://localhost:3001/students/${student.id}`, {
+        .patch(`https://clearance-database.onrender.com/students/${student.id}`, {
           [`${admin.username.toUpperCase()}-approval`]: "rejected",
           message: message + ` - KINDLY MEET THE ${admin.fullName} FOR MORE INFORMATION`,
         })
