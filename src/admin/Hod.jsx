@@ -18,7 +18,7 @@ const Hod = () => {
   const handleLeave = () => setIsExpanded(false);
   const handleLogout = async () => {
     try {
-      await axios.get('https://clearance-database.onrender.com/logout'); // Send a request to clear the session on the server-side
+      await axios.get('http://localhost:3001/logout'); // Send a request to clear the session on the server-side
       navigate('/login'); // Redirect to the login page
     } catch (error) {
       console.error('Logout failed:', error);
@@ -34,14 +34,15 @@ const Hod = () => {
       return;
     } 
     axios
-      .get(`https://clearance-database.onrender.com/students?clearanceRequest=true&department=${hod.department}`)
-      .then((res) => {
-        setStudents(res.data);
-      })
-      .catch((err) => {
-        console.error('Error fetching students:', err);
-        // Handle error: Display appropriate message to the user
-      });
+        .get(`http://localhost:3001/hod/students?clearanceRequest=true&hodApproval=pending&department=${hod.department}`)
+        .then((res) => {
+          console.log("students for approval:", res.data);
+          setStudents(res.data);
+        })
+        .catch((err) => {
+          console.error('Error fetching students:', err);
+          // Handle error: Display appropriate message to the user
+        });
 
   }, [hod]);  
 
@@ -54,11 +55,11 @@ const Hod = () => {
 
   const handleApprove = (student) => {
     axios
-      .patch(`https://clearance-database.onrender.com/students/${student.id}`, {
+      .patch(`http://localhost:3001/students/${student.id}`, {
         "HOD-approval": "approved",
         "message": "no messages", 
       })
-      .then((res) => {
+      .then(() => {
         setRejected((prevRejected) => prevRejected.filter((s) => s.id !== student.id)); // Remove student from rejected list
         setStudents((prevStudents) => prevStudents.filter((s) => s.id !== student.id)); // Remove student from pending list
         setApproved((prevApproved) => [...prevApproved, student]); // Add student to approved list
@@ -75,7 +76,7 @@ const Hod = () => {
     if (message) {
       setRejectMessage(message);
       axios
-        .patch(`https://clearance-database.onrender.com/students/${student.id}`, {
+        .patch(`http://localhost:3001/students/${student.id}`, {
           "HOD-approval": "rejected",
           "message": message + ` - KINDLY MEET THE HOD FOR MORE INFORMATION`,
         })

@@ -192,3 +192,75 @@ body{
   background-color: #393939 !important  ;
   opacity: 1 !important;
 }
+
+
+@media (max-width: 768px) {
+  .profile,
+  .dashboard {
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  .cardd-left {
+    width: 25%;
+  }
+
+  .cardd-middle,
+  .cardd-right {
+    width: 37.5%;
+  }
+
+  .request button {
+    width: 100px;
+    height: 100px;
+  }
+
+  .request button:hover {
+    background-color: rgb(120, 208, 120);
+  }
+
+  .status {
+    margin-top: 20px;
+  }
+
+  .doughnut {
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  .notification {
+    width: 100%;
+  }
+
+  .vr {
+    display: none;
+  }
+
+
+  .nav-wrapper {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+
+  .nav-wrapper.nav-expanded {
+    width: 100%;
+  }
+
+  .nav-wrapper .nav-link {
+    width: 100%;
+    text-align: center;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .nav-wrapper .nav-link:last-child {
+    border-bottom: none;
+  }
+
+  .nav-wrapper.nav-expanded .nav-link {
+    display: block;
+  }
+}
+
+

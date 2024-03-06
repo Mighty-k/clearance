@@ -3,12 +3,10 @@
 }
 
 .homepage{
-  background-image:url(./src/img/babcock-students.jpeg);
-  background-repeat: no-repeat;
-  background-size:cover;
+  
 }
 .bg-light {
-  opacity: 0.1;
+  opacity: 0.8 !important;
  
 }
 
@@ -28,5 +26,28 @@ a {
   text-decoration: none;
 }
 .background{
-  background-color: rgb(198, 216, 255);
+  /* background-color: rgb(198, 216, 255); */
+  background-image:url(./src/img/babcock-students.jpeg);
+  background-repeat: no-repeat;
+  background-size:cover;
+}
+
+@media (max-width: 768px) {
+  .homepage {
+    padding: 20px;
+  }
+
+  .row {
+    flex-direction: column-reverse;
+  }
+
+  .col-md-6 {
+    width: 100%;
+    text-align: center;
+  }
+
+  .col-md-6 img {
+    width: 100%;
+    margin-top: 20px;
+  }
 }
