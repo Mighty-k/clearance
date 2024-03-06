@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation  } from 'react-router-dom';
 import axios from "axios";
 import "./admin.css";
-import {avatar} from '../img/Profile-Avatar-PNG.png'
+import avatar from '../img/Profile-Avatar-PNG.png'
 
 const Admin = () => {
   const [isExpanded, setIsExpanded] = useState(false);

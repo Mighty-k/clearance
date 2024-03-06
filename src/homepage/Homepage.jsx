@@ -1,6 +1,6 @@
 // import { useState, useEffect } from 'react';
 import './Homepage.css'
-import {bulogo} from '../img/bulogo.jpg'
+import bulogo from '../img/bulogo.jpg'
 
 const Homepage = () => {
   

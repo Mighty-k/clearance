@@ -4,7 +4,7 @@ import Chart from 'chart.js/auto';
 import { Doughnut } from 'react-chartjs-2';
 import axios from "axios";
 import './Student.css';
-import {avatar} from '../img/Profile-Avatar-PNG.png'
+import avatar from '../img/Profile-Avatar-PNG.png'
 
 const StudentDashboard = () => {
   const [isExpanded, setIsExpanded] = useState(false);
