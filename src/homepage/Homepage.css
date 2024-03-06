@@ -27,7 +27,7 @@ a {
 }
 .background{
   /* background-color: rgb(198, 216, 255); */
-  background-image:url(./src/img/babcock-students.jpeg);
+  background-image:url(../img/babcock-students.jpeg);
   background-repeat: no-repeat;
   background-size:cover;
 }

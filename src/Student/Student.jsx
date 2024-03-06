@@ -4,6 +4,7 @@ import Chart from 'chart.js/auto';
 import { Doughnut } from 'react-chartjs-2';
 import axios from "axios";
 import './Student.css';
+import {avatar} from '../img/Profile-Avatar-PNG.png'
 
 const StudentDashboard = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -186,7 +187,7 @@ const options = {
             <div className="cardd-content">
               <div className="cardd-left">
                 <p>
-                  <img src="src/img/Profile-Avatar-PNG.png" alt="profile" />
+                  <img src={avatar} alt="profile" />
                 </p>
               </div>
               <div className="cardd-middle">

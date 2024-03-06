@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from "axios";
 import "./admin.css";
+import {avatar} from '../img/Profile-Avatar-PNG.png'
 
 const Hod = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -111,7 +112,7 @@ const Hod = () => {
       <div className="cardd-content">
       <div className="cardd-left">
                 <p>
-                  <img src="src/img/Profile-Avatar-PNG.png" alt="profile" />
+                  <img src={avatar} alt="profile" />
                 </p>
               </div>
               <div className="cardd-middle">

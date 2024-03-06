@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './login.css';
+import {bulogo} from '../img/bulogo.jpg'
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -75,7 +76,7 @@ const Login = () => {
       <div className="row">
         <div className="col-md-3">
           <img
-            src="src/img/bulogo.jpg"
+            src={bulogo}
             alt="Student Clearance System"
             className="img-fluid img"
           />
