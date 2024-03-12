@@ -6,6 +6,8 @@ import HODAdmin from "./admin/Hod"
 import Admin from "./admin/Admin"
 import Clearance from "./Student/clearance"
 import Signup from "./login/Signup"
+import OtpPage from "./login/Otp"
+import Verfyforzoho from "./zohoverify/verifyforzoho"
 const App = () =>{
   return(
     <Router>
@@ -17,6 +19,8 @@ const App = () =>{
       <Route exact path='/hod' element ={<HODAdmin/>}/>
       <Route exact path='/admin' element ={<Admin/>}/>
       <Route exact path='/clearance' element ={<Clearance/>}/>
+      <Route exact path='/otp' element ={<OtpPage/>}/>
+      <Route exact path='/zoho' element ={<Verfyforzoho/>}/>
       </Routes>
     </Router>
   )
