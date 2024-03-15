@@ -1,55 +1,60 @@
-import { useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import axios from 'axios';
 import './login.css'; 
-import bulogo from '../img/bulogo.jpg'
+import bulogo from '../img/bulogo.jpg';
 
+const OtpPage = () => {
+  const [otp, setOtp] = useState('');
+  const [error, setError] = useState('');
+  const [otpSentMessage, setOtpSentMessage] = useState(''); 
+  const location = useLocation();
+  const navigate = useNavigate();
+  const user = location.state.user; // Access the user from location.state
 
-const OtpPage = ({ email }) => {
-    const [otp, setOtp] = useState('');
-    const [error, setError] = useState('');
-    const [otpSentMessage, setOtpSentMessage] = useState(''); 
-    const location = useLocation();
-    const navigate = useNavigate();
-    const user = location.state.user; // Access the user from location.state
+  // Display timeout for messages and errors
+  useEffect(() => {
+    const messageTimer = setTimeout(() => {
+      setOtpSentMessage('');
+      setError('');
+    }, 5000); // 5 seconds timeout
+
+    return () => clearTimeout(messageTimer);
+  }, [otpSentMessage, error]);
+
+  const handleGenerateOtp = async () => {
+    try {
+      // Send a request to your backend to generate and send a new OTP
+      await axios.post('https://clearance-database.onrender.com/regenerate-otp', { email: user.email });
+      setOtpSentMessage('OTP has been sent to your email');
+    } catch (error) {
+      console.error('Error generating OTP:', error);
+      setError('Failed to generate OTP. Please try again.');
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     
-    const handleGenerateOtp = async () => {
-      try {
-        // Send a request to your backend to generate and send a new OTP
-        await axios.post('http://localhost:3001/regenerate-otp', { email: user.email });
-        setOtpSentMessage('OTP has been sent to your email');
-      } catch (error) {
-        console.error('Error generating OTP:', error);
-        setError('Failed to generate OTP. Please try again.');
+    try {
+      const response = await axios.post('https://clearance-database.onrender.com/verify-otp', { email: user.email, otp });
+      console.log('OTP verification successful');
+      console.log('response: ', response);
+      if (user.role === 'admin') {
+        navigate('/admin', { state: { admin: user } });
+      } else if (user.role === 'hod') {
+        navigate('/hod', { state: { hod: user } });
+      } else {
+        console.error('Unauthorized');
       }
-    };
-  
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        
-        try {
-          const response = await axios.post('http://localhost:3001/verify-otp', { email: user.email, otp });
-          console.log("email:",email);
-          console.log('OTP verification successful');
-          console.log('response: ', response);
-          if (user.role === 'admin') {
-            navigate('/admin', { state: { admin: user } });
-          } else if (user.role === 'hod') {
-            navigate('/hod', { state: { hod: user } });
-          } else {
-            console.error('Unauthorized');
-          }
-        } catch (error) {
-          console.error('Error verifying OTP:', error);
-          setError('Invalid OTP. Please try again.');
-        }
-      };
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
+      setError('Invalid OTP. Please try again.');
+    }
+  };
 
   return (
-
-<div className="container-fluid">
-      {/* ... */}
-      
+    <div className="container-fluid">
       <div className="row">
         <div className="col-md-3">
           <img
@@ -64,17 +69,18 @@ const OtpPage = ({ email }) => {
               <h3 className="card-title text-center mb-4">Enter the otp sent to your email</h3>
               {otpSentMessage && <p>{otpSentMessage}</p>}
               {error && <p className="alert alert-danger">{error}</p>}
-                <form onSubmit={handleSubmit}> 
-                    <input
-                    type="text"
-                    placeholder="Enter OTP"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
-                    required
-                    />
-                    <button className="btn btn-primary" type="submit">Verify OTP</button>
-                </form>
-                <button className="btn btn-secondary" onClick={handleGenerateOtp}>Regenerate OTP</button>
+              <form onSubmit={handleSubmit}> 
+                <input
+                  type="text"
+                  placeholder="Enter OTP"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  required
+                />
+                <button className="btn btn-primary" type="submit">Verify OTP</button>
+              </form>
+              <button className="btn btn-secondary" onClick={handleGenerateOtp}>Regenerate OTP</button>
+              <button className="btn btn-link mt-3" onClick={() => navigate('/')}>Back to Homepage</button>
             </div>
           </div>
         </div>

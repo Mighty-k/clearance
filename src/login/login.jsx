@@ -16,7 +16,7 @@ const Login = () => {
     e.preventDefault();
   
     try {
-      const response = await axios.post('http://localhost:3001/login', { username, password });
+      const response = await axios.post('https://clearance-database.onrender.com/login', { username, password });
       console.log('Login successful');
       const { dashboard, user } = response.data;
       console.log(response.data);
