@@ -25,7 +25,7 @@ const OtpPage = () => {
   const handleGenerateOtp = async () => {
     try {
       // Send a request to your backend to generate and send a new OTP
-      await axios.post('https://clearance-database.onrender.com/regenerate-otp', { email: user.email });
+      await axios.post('http://localhost:3001/regenerate-otp', { email: user.email });
       setOtpSentMessage('OTP has been sent to your email');
     } catch (error) {
       console.error('Error generating OTP:', error);
@@ -37,7 +37,7 @@ const OtpPage = () => {
     e.preventDefault();
     
     try {
-      const response = await axios.post('https://clearance-database.onrender.com/verify-otp', { email: user.email, otp });
+      const response = await axios.post('http://localhost:3001/verify-otp', { email: user.email, otp });
       console.log('OTP verification successful');
       console.log('response: ', response);
       if (user.role === 'admin') {

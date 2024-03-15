@@ -19,7 +19,7 @@ const Hod = () => {
   const handleLeave = () => setIsExpanded(false);
   const handleLogout = async () => {
     try {
-      await axios.get('https://clearance-database.onrender.com/logout'); // Send a request to clear the session on the server-side
+      await axios.get('http://localhost:3001/logout'); // Send a request to clear the session on the server-side
       navigate('/login'); // Redirect to the login page
     } catch (error) {
       console.error('Logout failed:', error);
@@ -35,7 +35,7 @@ const Hod = () => {
       return;
     } 
     axios
-        .get(`https://clearance-database.onrender.com/hod/students?clearanceRequest=true&hodApproval=pending&department=${hod.department}`)
+        .get(`http://localhost:3001/hod/students?clearanceRequest=true&hodApproval=pending&department=${hod.department}`)
         .then((res) => {
           console.log("students for approval:", res.data);
           setStudents(res.data);
@@ -56,7 +56,7 @@ const Hod = () => {
 
   const handleApprove = (student) => {
     axios
-      .patch(`https://clearance-database.onrender.com/students/${student.id}`, {
+      .patch(`http://localhost:3001/students/${student.id}`, {
         "HOD-approval": "approved",
         "message": "no messages", 
       })
@@ -77,7 +77,7 @@ const Hod = () => {
     if (message) {
       setRejectMessage(message);
       axios
-        .patch(`https://clearance-database.onrender.com/students/${student.id}`, {
+        .patch(`http://localhost:3001/students/${student.id}`, {
           "HOD-approval": "rejected",
           "message": message + ` - KINDLY MEET THE HOD FOR MORE INFORMATION`,
         })
