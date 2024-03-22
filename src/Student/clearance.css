@@ -53,6 +53,14 @@
   .part-b p {
     margin-bottom: 5px;
   }
+  .part-a p,
+  .part-a h3,
+  .part-a strong,
+  .part-e h3, .part-e p
+  /* .part-a span */
+  {
+    padding: 1%;
+  }
   
   .clearance-table {
     width: 100%;

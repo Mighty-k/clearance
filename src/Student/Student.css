@@ -51,9 +51,9 @@ body{
   border: none;
   border-radius: 12px;
   padding: 4%;
-  background: rgba(40, 87, 169, 0.874);
+  background: rgba(234, 245, 247, 0.92);
   /* background: linear-gradient(90deg, rgba(157,135,232,1) 0%, rgba(191,168,236,1) 7%, rgba(33,48,91,1) 100%, rgba(0,3,36,0.7833508403361344) 100%); */
-  color: #fff;
+  color: #0b0b0b;
 }
 
 .cardd-content {
@@ -117,7 +117,7 @@ body{
   width:100% ;
   margin-top: 5%;
   border-radius: 12px;
-  background-color: rgba(104, 179, 208, 0.874) !important;
+  background-color: rgba(234, 245, 247, 0.92) !important;
   padding: 0%;
   /* background: linear-gradient(90deg, rgba(59,179,230,1) 0%, rgba(37,61,246,1) 100%, rgba(0,3,36,0.7833508403361344) 100%); */
 }
@@ -125,7 +125,7 @@ body{
   color: #edc644;
 }
 .status li{
-  background-color: #ffffff80 ;
+  background-color: #fffffffc !important;
   
 }
 .status ul{
@@ -159,7 +159,7 @@ body{
 }
 .graph {
   flex: 2;
-  background:rgb(103, 152, 227,0.874);
+  background:rgba(234, 245, 247, 0.92);
   padding: 20px;
   margin: 10px;
   border-radius: 15px;
@@ -170,7 +170,7 @@ body{
 }
 .notification {
   flex: 1;
-  background: rgb(4, 144, 127,0.874);
+  background: rgba(234, 245, 247, 0.92);
   /* background: linear-gradient(90deg, rgba(161,230,59,1) 0%, rgba(230,64,64,1) 0%, rgba(246,224,37,1) 100%, rgba(0,3,36,0.7833508403361344) 100%); */
   padding: 20px;
   margin: 10px;

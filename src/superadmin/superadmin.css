@@ -1,0 +1,21 @@
+
+.super{
+    margin-bottom: 5%;
+    padding: 2% 3%;
+}
+.add{
+    padding: 3%;
+}
+/* .add button{
+
+    margin: 10% 0;
+}  */
+.add input,.add select{
+    margin-bottom:2%;
+}
+.edit{
+    padding: 3%    ;
+}
+.edit input, .edit select, .edit label{
+    margin-bottom: 2%;
+}

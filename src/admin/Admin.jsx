@@ -1,47 +1,71 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useLocation  } from 'react-router-dom';
+import  { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import "./admin.css";
-import avatar from '../img/Profile-Avatar-PNG.png'
+import avatar from "../img/Profile-Avatar-PNG.png";
 
-const Admin = () => {
+const Officers = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [students, setStudents] = useState([]);
   const [approved, setApproved] = useState([]);
   const [rejected, setRejected] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [studentsPerPage] = useState(2); // Number of students to display per page
   const navigate = useNavigate();
   const location = useLocation();
-  const admin = location.state?.admin;
+  const officer = location.state?.admin;
+  const currentDate = new Date().toISOString();
+  // console.log(officer);
 
   const handleHover = () => setIsExpanded(true);
   const handleLeave = () => setIsExpanded(false);
+
+  const navigateReportPage = () =>{
+    navigate("/officer_report", {state:{officer}})
+  }
+
   const handleLogout = async () => {
     try {
-      await axios.get('http://localhost:3001/logout');
-      navigate('/login');
+        await axios.get('http://localhost:3001/logout');
+        navigate('/login');
+
+        // Replace current location with login page to remove it from history
+        window.history.replaceState(null, '', '/login');
     } catch (error) {
-      console.error('Logout failed:', error);
+        console.error('Logout failed:', error);
     }
-  };
+};
 
   useEffect(() => {
-    if (!admin) {
-      navigate('/login');
+    if (!officer) {
+      navigate("/login");
       return;
-    } 
+    }
+    
 
     const getStudents = async () => {
       try {
         const queryParams = {
           clearanceRequest: true,
-          adminUsername: admin.username
+          officerUsername: officer.username,
         };
-        const response = await axios.get(`http://localhost:3001/filteredStudents`, { params: queryParams });
+        const response = await axios.get(
+          `http://localhost:3001/filteredStudents`,
+          { params: queryParams }
+        );
         const allStudents = response.data;
-        console.log("filtered: ",response.data);
-        const pendingStudents = allStudents.filter(student => student[`${admin.username.toUpperCase()}-approval`] === "pending");
-        const approvedStudents = allStudents.filter(student => student[`${admin.username.toUpperCase()}-approval`] === "approved");
-        const rejectedStudents = allStudents.filter(student => student[`${admin.username.toUpperCase()}-approval`] === "rejected");
+        const pendingStudents = allStudents.filter(
+          (student) =>
+            student[`${officer.username.toUpperCase()}-approval`] === "pending"
+        );
+        const approvedStudents = allStudents.filter(
+          (student) =>
+            student[`${officer.username.toUpperCase()}-approval`] === "approved"
+        );
+        const rejectedStudents = allStudents.filter(
+          (student) =>
+            student[`${officer.username.toUpperCase()}-approval`] === "rejected"
+        );
 
         setStudents(pendingStudents);
         setApproved(approvedStudents);
@@ -52,44 +76,100 @@ const Admin = () => {
     };
 
     getStudents();
-  }, [admin]);
+  }, [officer]);
 
   const handleApprove = (student) => {
+    
+
     axios
+
       .patch(`http://localhost:3001/students/${student.id}`, {
-        [`${admin.username.toUpperCase()}-approval`]: "approved",
+
+        [`${officer.username.toUpperCase()}-approval`]: "approved",
+        [`${officer.username}Date`]:currentDate,
         message: "no messages", 
+
       })
+
       .then(() => {
+
         setRejected((prevRejected) => prevRejected.filter((s) => s.id !== student.id));
+
         setStudents((prevStudents) => prevStudents.filter((s) => s.id !== student.id));
+
         setApproved((prevApproved) => [...prevApproved, student]);
+
       })
+
       .catch((err) => {
+
         console.error("Error fetching students:", err);
+
       });
+
   };
 
+
+
   const handleReject = (student) => {
+
     const message = prompt(
+
       "Please enter a message to the rejected student:",
+
       "Sorry, your request has been rejected because "
+
     );
+
     if (message) {
+
       axios
+
         .patch(`http://localhost:3001/students/${student.id}`, {
-          [`${admin.username.toUpperCase()}-approval`]: "rejected",
-          message: message + ` - KINDLY MEET THE ${admin.fullName} FOR MORE INFORMATION`,
+
+          [`${officer.username.toUpperCase()}-approval`]: "rejected",
+          [`${officer.username}Date`]:currentDate,
+
+          message: message + ` - KINDLY MEET THE ${officer.fullName.toUpperCase()} FOR MORE INFORMATION`,
+
         })
+
         .then(() => {
+
           setStudents((prevStudents) => prevStudents.filter((s) => s.id !== student.id));
+
           setRejected((prevRejected) => [...prevRejected, { ...student, message }]);
+
         })
+
         .catch((err) => {
+
           console.error(err);
+
         });
+
     }
+
   };
+
+  // Logic to get current students for pagination
+  const indexOfLastStudent = currentPage * studentsPerPage;
+  const indexOfFirstStudent = indexOfLastStudent - studentsPerPage;
+  const currentPendingStudents = students.slice(
+    indexOfFirstStudent,
+    indexOfLastStudent
+  );
+  const currentApprovedStudents = approved.slice(
+    indexOfFirstStudent,
+    indexOfLastStudent
+  );
+  const currentRejectedStudents = rejected.slice(
+    indexOfFirstStudent,
+    indexOfLastStudent
+  );
+
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <div className="container">
@@ -101,13 +181,20 @@ const Admin = () => {
       >
         <ul className="nav flex-column nav-pills">
           <li className="nav-item">
-            <a className="nav-link active" href="/admin">
+            <a className="nav-link active" href="/officer">
               <i className="fas fa-home"></i> {isExpanded && "Home"}
             </a>
-          </li> 
+          </li>
+          <li className="nav-item">
+          <button className="nav-link " onClick={navigateReportPage}>
+          <i className="fas fa-print"></i> {" "}
+              {isExpanded && "Report"}
+            </button>
+          </li>
           <li className="nav-item">
             <button className="nav-link" onClick={handleLogout}>
-              <i className="fas fa-sign-out-alt"></i> {isExpanded && "Logout"}
+              <i className="fas fa-sign-out-alt"></i>{" "}
+              {isExpanded && "Logout"}
             </button>
           </li>
         </ul>
@@ -125,9 +212,9 @@ const Admin = () => {
             <div className="cardd-middle"></div>
             <div className="cardd-left">
               <p className="cardd-text" id="admin">
-                <span className="fn">Name:</span> {admin.fullName}
+                <span className="fn">Name:</span> {officer.fullName}
                 <br />
-                <span className="dept">Department:</span> {admin.username}
+                <span className="dept">Department:</span> {officer.username}
                 <br />
               </p>
             </div>
@@ -150,7 +237,7 @@ const Admin = () => {
               </tr>
             </thead>
             <tbody>
-              {students.map((student) => (
+              {currentPendingStudents.map((student) => (
                 <tr key={student.id}>
                   <td>{student.name}</td>
                   <td>{student.department}</td>
@@ -173,9 +260,15 @@ const Admin = () => {
               ))}
             </tbody>
           </table>
+          {/* Pagination for pending clearance requests */}
+          <Pagination
+            itemsPerPage={studentsPerPage}
+            totalItems={students.length}
+            paginate={paginate}
+          />
         </div>
         <hr />
-       
+
         {/* Rejected clearance requests */}
         <div className="row clr-rejected">
           <h2 className="text-left">Rejected Clearance</h2>
@@ -189,21 +282,32 @@ const Admin = () => {
               </tr>
             </thead>
             <tbody>
-              {rejected.map((student) => (
+              {currentRejectedStudents.map((student) => (
                 <tr key={student.id}>
                   <td>{student.name}</td>
                   <td>{student.department}</td>
                   <td>{student.matricNumber}</td>
                   <td>
-                    <button className="btn btn-warning" onClick={() => handleApprove(student)}>Approve</button>
+                    <button
+                      className="btn btn-warning"
+                      onClick={() => handleApprove(student)}
+                    >
+                      Approve
+                    </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          {/* Pagination for rejected clearance requests */}
+          <Pagination
+            itemsPerPage={studentsPerPage}
+            totalItems={rejected.length}
+            paginate={paginate}
+          />
         </div>
         <hr />
-         
+
         {/* Approved clearance requests */}
         <div className="row clr-aprv">
           <h2 className="text-left">Approved Clearance</h2>
@@ -216,7 +320,7 @@ const Admin = () => {
               </tr>
             </thead>
             <tbody>
-              {approved.map(student => (
+              {currentApprovedStudents.map((student) => (
                 <tr key={student.id}>
                   <td>{student.name}</td>
                   <td>{student.department}</td>
@@ -225,10 +329,39 @@ const Admin = () => {
               ))}
             </tbody>
           </table>
+          {/* Pagination for approved clearance requests */}
+          <Pagination
+            itemsPerPage={studentsPerPage}
+            totalItems={approved.length}
+            paginate={paginate}
+          />
         </div>
       </div>
     </div>
   );
 };
 
-export default Admin;
+// Pagination component
+const Pagination = ({ itemsPerPage, totalItems, paginate }) => {
+  const pageNumbers = [];
+
+  for (let i = 1; i <= Math.ceil(totalItems / itemsPerPage); i++) {
+    pageNumbers.push(i);
+  }
+
+  return (
+    <nav>
+      <ul className="pagination">
+        {pageNumbers.map((number) => (
+          <li key={number} className="page-item">
+            <button onClick={() => paginate(number)} className="page-link">
+              {number}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+};
+
+export default Officers;

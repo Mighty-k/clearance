@@ -41,10 +41,15 @@ const OtpPage = () => {
       console.log('OTP verification successful');
       console.log('response: ', response);
       if (user.role === 'admin') {
-        navigate('/admin', { state: { admin: user } });
+        navigate('/officer', { state: { admin: user } });
       } else if (user.role === 'hod') {
         navigate('/hod', { state: { hod: user } });
-      } else {
+      } else if(user.role === 'superAdmin'){
+        navigate('/admin', {state: {super:user}})
+      }
+      
+      
+      else {
         console.error('Unauthorized');
       }
     } catch (error) {

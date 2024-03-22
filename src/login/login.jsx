@@ -24,9 +24,16 @@ const Login = () => {
       // Redirect user to the appropriate dashboard based on role
       if (dashboard === 'student') {
         navigate('/student', { state: { student: user } });
-      } else if (dashboard === 'otp') {
+      }
+      
+      else if (dashboard === 'otp') {
         navigate('/otp', {state: {user:user}});
-      } else {
+     //  else if (dashboard === 'admin') {
+      //   navigate('/officer', {state: {admin:user}});
+      }
+       // } else if (dashboard === 'hod') {
+      //   navigate('/hod', {state: {hod:user}});
+      else {
         console.error('Unauthorized');
       }
     } catch (error) {
@@ -53,9 +60,12 @@ const Login = () => {
       }, 700); // 0.7 second
   
       // Set a timeout to clear the message 
+     
+    }
+    if(message !== ""){
       messageTimeoutId = setTimeout(() => {
         setMessage('');
-      }, 1000); // 1 second
+      }, 2000); // 1 second
     }
   
     // Cleanup function to clear the timeouts if the component unmounts or is updated

@@ -19,6 +19,7 @@ const StudentDashboard = () => {
 
   const handleHover = () => setIsExpanded(true);
   const handleLeave = () => setIsExpanded(false);
+  const Student_Data = location.state?.student;
 
   const handleRequestClearance = async () => {
     try {
@@ -44,20 +45,20 @@ const StudentDashboard = () => {
       // Handle error: Display error message to the user
     }
   };
-
   const handleLogout = async () => {
     try {
-      await axios.get('http://localhost:3001/logout'); // Send a request to clear the session on the server-side
-      navigate('/login'); // Redirect to the login page
+        await axios.get('http://localhost:3001/logout');
+        navigate('/login');
+
+        // Replace current location with login page to remove it from history
+        window.history.replaceState(null, '', '/login');
     } catch (error) {
-      console.error('Logout failed:', error);
-      // Handle logout failure
+        console.error('Logout failed:', error);
     }
-  };
-  
+};
 
   useEffect(() => {
-    const Student_Data = location.state?.student;
+    
   // console.log(Student_Data);
   if (!Student_Data) {
     navigate('/login'); // Redirect to login page if user data is not available
@@ -72,13 +73,13 @@ const StudentDashboard = () => {
         throw new Error('Failed to fetch student data');
       }
       const studentData = await response.json();
-  
       // Process department approval data
       const formattedDepartments = Object.entries(studentData)
         .filter(([key, value]) => key.endsWith('-approval'))
         .map(([department, adminApproval]) => ({
           name: department.slice(0, -9),
           approvalStatus: adminApproval === "approved" ? "Approved" : adminApproval === "rejected" ? "Rejected" : "Pending",
+          
         }));
   
       setStudent(studentData);
@@ -150,14 +151,9 @@ const options = {
   }
 };
 
-// useEffect(() => {
-//   if (departments.length > 0) {
-//     renderCircularChart(departments);
-//   }
-// }, [departments]);
-
-
-
+const navigateClearancePage= () =>{
+  navigate("/clearance", {state:{student}})
+}
 
   return (
     <div className="container-fluid das-body ">
@@ -169,9 +165,9 @@ const options = {
             </a>
           </li>
           <li className="nav-item">
-            <a className="nav-link" href="/clearance">
+            <button className="nav-link" onClick={navigateClearancePage} >
               <i className="fas fa-print"></i> {isExpanded && 'Print Clearance Report'}
-            </a>
+            </button>
           </li>
           <li className="nav-item">
             <a className="nav-link" onClick={handleLogout}>
