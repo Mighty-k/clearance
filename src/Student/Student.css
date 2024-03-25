@@ -50,9 +50,12 @@ body{
   background-repeat: no-repeat;
   background-size: cover;
   background-attachment: fixed;
-  height: 100% !important;
+  height: 190vh !important;
 }
-
+.edit-btn{
+  border: none;
+  background-color: #ffffff00;
+}
 .cardd {
   width: 100%;
   border: none;

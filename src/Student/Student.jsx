@@ -218,6 +218,8 @@ const navigateClearancePage= () =>{
                   <span>Phone Number:</span> {student.phoneNumber}<br />
                   <span>Date of Birth</span>: {student.dateOfBirth}<br />
                   <span>Month of Graduation:</span> {student.monthOfGraduation}
+                  <span><button className='edit-btn' onClick={()=>navigate("/edit", {state:{student}})}>
+                  <i className="fas fa-edit"></i></button></span>
                 </p>
               </div>
             </div>

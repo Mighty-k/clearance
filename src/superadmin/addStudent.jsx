@@ -65,12 +65,12 @@ const AddStudentForm = () => {
     }
   };
 
-  const goBack = () => {
-    navigate(-1);
-  };
 
   return (
     <div className="container rounded-3 bg-white add  align-items-center">
+       <h2>
+        Add Student
+      </h2>
       <form onSubmit={handleSubmit}>
         <div className="">
           <input className="form-control"
@@ -151,13 +151,14 @@ const AddStudentForm = () => {
             <option value="December">December</option>
           </select>
           <button className='btn btn-success' type="submit">Add Student</button>
-          <button className='btn btn-primary' onClick={goBack}>
-        Back
-      </button>
+          
 
         </div>
         
       </form>
+      <button className='btn btn-primary' onClick={()=>navigate(-1)}>
+        Back
+      </button>
      
     </div>
     

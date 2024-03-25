@@ -17,6 +17,7 @@ import HodReportPage from "./admin/hodreport"
 import EditStudentDetails from "./superadmin/EditStudentDetail"
 import EditOfficersDetails from "./superadmin/EditOfficer"
 import EditHodsDetails from "./superadmin/EditHod"
+import EditDetails from "./Student/edit"
 const App = () =>{
   return(
     <Router>
@@ -39,6 +40,7 @@ const App = () =>{
       <Route exact path='/editStudent' element ={<EditStudentDetails/>}/>
       <Route exact path='/editOfficer' element ={<EditOfficersDetails/>}/>
       <Route exact path='/editHod' element ={<EditHodsDetails/>}/>
+      <Route exact path='/edit' element ={<EditDetails/>}/>
 
       <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

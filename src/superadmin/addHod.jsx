@@ -42,9 +42,7 @@ if (!admin ) {
     }
     
   };
-  const goback= () => {
-    navigate(-1)
-  }
+  
 
   return (
     <div className="container rounded-3 bg-white add ">
@@ -53,7 +51,7 @@ if (!admin ) {
       </h2>
       
       <form className='form' onSubmit={handleSubmit}>
-        <div className="container ">
+        <div className=" ">
         <label className="form-labael">
            Department:</label>
         <input className="form-control"
@@ -110,12 +108,12 @@ if (!admin ) {
       />
        
       <button className=' btn btn-success ' type="submit">Add hod</button>
-      <button className='btn btn-primary' onClick={goback}>
-      Back
-    </button>
+      
         </div>
     </form>
-    
+    <button className='btn btn-primary' onClick={()=>navigate(-1)}>
+      Back
+    </button>
     </div>
     
   );
