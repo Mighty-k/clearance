@@ -1,4 +1,4 @@
-import {BrowserRouter as Router, Routes, Route} from "react-router-dom"
+import {BrowserRouter as Router, Routes, Route,Navigate} from "react-router-dom"
 import Homepage from "./homepage/Homepage"
 import Login from "./login/login"
 import StudentDashboard from "./Student/Student"
@@ -40,6 +40,7 @@ const App = () =>{
       <Route exact path='/editOfficer' element ={<EditOfficersDetails/>}/>
       <Route exact path='/editHod' element ={<EditHodsDetails/>}/>
 
+      <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   )

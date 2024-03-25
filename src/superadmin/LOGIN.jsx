@@ -20,12 +20,13 @@ const AdminLogin = () => {
         const response = await axios.post('http://localhost:3001/logadmin', { username, password });
         console.log('Login successful');
         const { dashboard, user } = response.data;
-        console.log(response.data);
+        // console.log(response.data);
      
-       if  (dashboard === 'superAdmin'){
-        navigate('/superadmin', {state: {super:user}});
+      //  if  (dashboard === 'superAdmin'){
+      //   navigate('/superadmin', {state: {super:user}});
  
-        }else if (dashboard === 'otp') {   
+      //   }else 
+        if (dashboard === 'otp') {   
            
             navigate('/otp', {state: {user:user}});
         }

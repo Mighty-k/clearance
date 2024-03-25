@@ -1,5 +1,5 @@
 
-import  { useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import axios from 'axios';
 import './superadmin.css'
@@ -31,6 +31,13 @@ const AddAdminForm = () => {
     }
     
   };
+
+  useEffect(()=>{
+    if(!officer){
+      navigate("/login")
+      return
+    }
+  })
 
   return (
     <div className="container rounded-3 bg-white add text-center align-items-center">

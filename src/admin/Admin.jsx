@@ -10,7 +10,7 @@ const Officers = () => {
   const [approved, setApproved] = useState([]);
   const [rejected, setRejected] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [studentsPerPage] = useState(2); // Number of students to display per page
+  const [studentsPerPage] = useState(5); // Number of students to display per page
   const navigate = useNavigate();
   const location = useLocation();
   const officer = location.state?.admin;
@@ -24,59 +24,57 @@ const Officers = () => {
     navigate("/officer_report", {state:{officer}})
   }
 
-  const handleLogout = async () => {
-    try {
-        await axios.get('http://localhost:3001/logout');
-        navigate('/login');
-
-        // Replace current location with login page to remove it from history
-        window.history.replaceState(null, '', '/login');
-    } catch (error) {
-        console.error('Logout failed:', error);
-    }
+  
+  const handleLogout = () => {
+    navigate("/login", {replace:true})
 };
 
-  useEffect(() => {
-    if (!officer) {
-      navigate("/login");
-      return;
+useEffect(() => {
+  if (!officer) {
+    navigate("/login");
+    return; // This will prevent further execution of the useEffect
+  }
+
+  const getStudents = async () => {
+    try {
+      const queryParams = {
+        clearanceRequest: true,
+        officerUsername: officer.username,
+      };
+      const response = await axios.get(
+        `http://localhost:3001/filteredStudents`,
+        { params: queryParams }
+      );
+      const allStudents = response.data;
+      const pendingStudents = allStudents.filter(
+        (student) =>
+          student[`${officer.username.toUpperCase()}-approval`] === "pending"
+      );
+      const approvedStudents = allStudents.filter(
+        (student) =>
+          student[`${officer.username.toUpperCase()}-approval`] === "approved"
+      );
+      const rejectedStudents = allStudents.filter(
+        (student) =>
+          student[`${officer.username.toUpperCase()}-approval`] === "rejected"
+      );
+
+      setStudents(pendingStudents);
+      setApproved(approvedStudents);
+      setRejected(rejectedStudents);
+    } catch (error) {
+      console.error(error);
     }
-    
+  };
 
-    const getStudents = async () => {
-      try {
-        const queryParams = {
-          clearanceRequest: true,
-          officerUsername: officer.username,
-        };
-        const response = await axios.get(
-          `http://localhost:3001/filteredStudents`,
-          { params: queryParams }
-        );
-        const allStudents = response.data;
-        const pendingStudents = allStudents.filter(
-          (student) =>
-            student[`${officer.username.toUpperCase()}-approval`] === "pending"
-        );
-        const approvedStudents = allStudents.filter(
-          (student) =>
-            student[`${officer.username.toUpperCase()}-approval`] === "approved"
-        );
-        const rejectedStudents = allStudents.filter(
-          (student) =>
-            student[`${officer.username.toUpperCase()}-approval`] === "rejected"
-        );
+  getStudents();
+}, [officer, navigate]);
+  
+if (!officer ) {
 
-        setStudents(pendingStudents);
-        setApproved(approvedStudents);
-        setRejected(rejectedStudents);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+  return null;
+}
 
-    getStudents();
-  }, [officer]);
 
   const handleApprove = (student) => {
     
@@ -171,8 +169,9 @@ const Officers = () => {
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+
   return (
-    <div className="container">
+    <div className="container das-body">
       {/* Navigation section */}
       <div
         className={`nav-wrapper ${isExpanded ? "nav-expanded" : ""}`}

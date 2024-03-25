@@ -1,5 +1,6 @@
 import { useNavigate, useLocation  } from 'react-router-dom';
 import "./clearance.css"
+import { useEffect } from 'react';
 
 
 function Clearance() {
@@ -7,6 +8,16 @@ function Clearance() {
   const navigate = useNavigate();
   const student = location.state?.student;
 
+  useEffect(()=>{
+    if(!student){
+      navigate("/login")
+      return
+    }
+  })
+  if (!student ) {
+
+    return null;
+  }
   
   const handlePrint = () => {
     window.print(); // Trigger the print functionality
@@ -44,7 +55,7 @@ function Clearance() {
           <span>    </span>
           <strong>DEPARTMENT:</strong> <span>{student.department}</span>
           <span> </span>
-          <strong>COURSE:</strong> <span>{student.course}</span>
+          <strong>SCHOOL:</strong> <span>{student.school}</span>
 
         </p>
         <p>

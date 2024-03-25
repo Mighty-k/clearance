@@ -1,12 +1,12 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation  } from 'react-router-dom';
 import Chart from 'chart.js/auto';
 import { Doughnut } from 'react-chartjs-2';
-import axios from "axios";
 import './Student.css';
 import avatar from '../img/Profile-Avatar-PNG.png'
 
 const StudentDashboard = () => {
+  
   const [isExpanded, setIsExpanded] = useState(false);
   const [student, setStudent] = useState({});
   const [isRequestButtonVisible, setIsRequestButtonVisible] = useState(true);
@@ -17,9 +17,11 @@ const StudentDashboard = () => {
   const location = useLocation(); 
   const navigate = useNavigate();
 
+
   const handleHover = () => setIsExpanded(true);
   const handleLeave = () => setIsExpanded(false);
   const Student_Data = location.state?.student;
+  // setStudentData(Student_Data)
 
   const handleRequestClearance = async () => {
     try {
@@ -45,21 +47,31 @@ const StudentDashboard = () => {
       // Handle error: Display error message to the user
     }
   };
-  const handleLogout = async () => {
-    try {
-        await axios.get('http://localhost:3001/logout');
-        navigate('/login');
-
-        // Replace current location with login page to remove it from history
-        window.history.replaceState(null, '', '/login');
-    } catch (error) {
-        console.error('Logout failed:', error);
-    }
+const handleLogout = () => {
+   navigate("/login", {replace:true})
 };
 
-  useEffect(() => {
+
+// if (!Student_Data){
+//   return(
+//     <div className="container text-center bg-white align-items-center">
+//     <h3>
+//       you have not logged in please proceed to the login page
+//     </h3>
+
+//     <a className='nav-link' href="/login">
+//       <h1>
+//         login
+//       </h1>
+//     </a>
     
-  // console.log(Student_Data);
+//     </div>
+//   )
+// }
+
+
+
+  useEffect(() => {
   if (!Student_Data) {
     navigate('/login'); // Redirect to login page if user data is not available
     return;
@@ -137,6 +149,11 @@ const StudentDashboard = () => {
   fetchStudentData(); // Fetch data and process it for the dynamic chart
 }, [location.state?.student]);
 
+if (!Student_Data ) {
+
+  return null;
+}
+
 const options = {
   plugins: {
     legend: {
@@ -192,7 +209,7 @@ const navigateClearancePage= () =>{
                   <span>Name:</span>  {student.name}<br />
                   <span>Matric Number:</span>  {student.matricNumber}<br />
                   <span>Department:</span>  {student.department}<br />
-                  <span>Course:</span>  {student.course}
+                  <span>School:</span>  {student.school}
                 </p>
               </div>
               <div className="cardd-right">

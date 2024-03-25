@@ -32,10 +32,10 @@
 
 
 body{
-  background-image:url(../img/babcockuniversity.jpg) !important;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-attachment: fixed;
+  /* background-image:url(../img/babcockuniversity.jpg) ; */
+  /* background-repeat: no-repeat; */
+  /* background-size: cover; */
+  /* background-attachment: fixed; */
     scroll-behavior: smooth !important;
   transition: all 0.5s!important;
   padding: 0% !important; 
@@ -43,7 +43,12 @@ body{
 
 .profile{
   width: 100%;
-
+}
+.das-body{
+  background-image:url(../img/babcockuniversity.jpg) ;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
 }
 
 .cardd {

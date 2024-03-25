@@ -7,13 +7,20 @@ const EditStudentDetails = () => {
   const user = location.state?.student;
   const navigate = useNavigate();
   // State variables to store the edited details
-  const [editedName, setEditedName] = useState(user.name);
-  const [editedEmail, setEditedEmail] = useState(user.email);
-  const [editedMatric, setEditedMatric] =useState(user.matricNumber);
-  const [editPhone, setEditPhone ] = useState(user.phoneNumber);
-  const [editMonth, setEditMonth ] = useState(user.monthOfGraduation);
+  const [editedName, setEditedName] = useState(user?.name??"");
+  const [editedEmail, setEditedEmail] = useState(user?.email??"");
+  const [editedMatric, setEditedMatric] =useState(user?.matricNumber??"");
+  const [editPhone, setEditPhone ] = useState(user?.phoneNumber??"");
+  const [editMonth, setEditMonth ] = useState(user?.monthOfGraduation??"");
   // Add more state variables as needed
-
+  if (!user) {
+    return(
+       <div className="container bg-white text-center">
+        <h1>user not found!</h1>  
+        <button className="btn btn-secondary" onClick={()=>navigate(-1)}>
+          back</button>
+       </div>);
+  }
   // Function to handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,9 +44,6 @@ const EditStudentDetails = () => {
     }
   };
 
-  if (!user) {
-    return <div>User data not found</div>; // Render a message if user data is not available
-  }
 
   return (
     <div className="container edit bg-white rounded-3">

@@ -10,7 +10,7 @@ const Hod = () => {
   const [approved, setApproved] = useState([]);
   const [rejected, setRejected] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [studentsPerPage] = useState(2); // Number of students to display per page
+  const [studentsPerPage] = useState(5); // Number of students to display per page
   const [rejectMessage, setRejectMessage] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
@@ -23,16 +23,8 @@ const Hod = () => {
 
   const handleHover = () => setIsExpanded(true);
   const handleLeave = () => setIsExpanded(false);
-  const handleLogout = async () => {
-    try {
-        await axios.get('http://localhost:3001/logout');
-        navigate('/login');
-
-        // Replace current location with login page to remove it from history
-        window.history.replaceState(null, '', '/login');
-    } catch (error) {
-        console.error('Logout failed:', error);
-    }
+  const handleLogout = () => {
+    navigate("/login", {replace:true})
 };
 
   useEffect(() => {
@@ -43,20 +35,25 @@ const Hod = () => {
     axios
         .get(`http://localhost:3001/hod/students?clearanceRequest=true&hodApproval=pending&department=${hod.department}`)
         .then((res) => {
-          console.log("students for approval:", res.data);
+          // console.log("students for approval:", res.data);
           setStudents(res.data);
         })
         .catch((err) => {
           console.error('Error fetching students:', err);
         });
   }, [hod]);  
-
+ 
   useEffect(() => {
     const filteredApproved = students.filter(student => student['HOD-approval'] === "approved");
     const filteredRejected = students.filter(student => student['HOD-approval'] === "rejected");
     setApproved(filteredApproved);
     setRejected(filteredRejected);
   }, [students]);  
+
+  if (!hod ) {
+
+    return null;
+  }
 
   // Logic to get current students for pagination
   const indexOfLastStudent = currentPage * studentsPerPage;
@@ -75,11 +72,13 @@ const Hod = () => {
       .patch(`http://localhost:3001/students/${student.id}`, {
         "HOD-approval": "approved",
         "hodDate":currentDate,
-        "message": "no messages", 
+        message: "no messages", 
       })
       .then(() => {
         setRejected((prevRejected) => prevRejected.filter((s) => s.id !== student.id));
+
         setStudents((prevStudents) => prevStudents.filter((s) => s.id !== student.id));
+
         setApproved((prevApproved) => [...prevApproved, student]);
       })
       .catch((err) => {
@@ -97,11 +96,13 @@ const Hod = () => {
         .patch(`http://localhost:3001/students/${student.id}`, {
           "HOD-approval": "rejected",
           "hodDate":currentDate,
-          "message": message + ` - KINDLY MEET THE HOD FOR MORE INFORMATION`,
+          message: message + ` - KINDLY MEET THE HOD FOR MORE INFORMATION`,
         })
-        .then((res) => {
+        .then(() => {
           setStudents((prevStudents) => prevStudents.filter((s) => s.id !== student.id));
+
           setRejected((prevRejected) => [...prevRejected, { ...student, message }]);
+
         })
         .catch((err) => {
           console.error(err);
@@ -110,7 +111,7 @@ const Hod = () => {
   };
 
   return (
-    <div className="container">
+    <div className="container das-body">
       <div className={`nav-wrapper ${isExpanded ? "nav-expanded" : ""}`} onMouseOver={handleHover} onMouseLeave={handleLeave}>
         <ul className="nav flex-column nav-pills">
           <li className="nav-item">

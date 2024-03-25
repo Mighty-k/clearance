@@ -1,5 +1,5 @@
-import  { useState } from 'react';
-import { useNavigate } from 'react-router';
+import  { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router';
 import axios from 'axios';
 import "./superadmin.css"
 const AddHodForm = () => {
@@ -8,10 +8,23 @@ const AddHodForm = () => {
     department:'', 
         departmentCode:'', 
          username:'',
-         fullname:'',
+         fullName:'',
           email:'',
          password:'',
   });
+const location = useLocation();
+const admin = location.state?.superAdmin
+
+useEffect(()=>{
+  if(!admin){
+    navigate("/login")
+    return
+  }
+})
+if (!admin ) {
+
+  return null;
+}
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -71,11 +84,11 @@ const AddHodForm = () => {
       <label className="form-labael">
            Full name:</label>
        <input className="form-control"
-        type="fullname" 
-        name="fullname" 
-        value={formData.fullname} 
+        type="text" 
+        name="fullName" 
+        value={formData.fullName} 
         onChange={handleChange} 
-        placeholder="fullname" 
+        placeholder="fullName" 
       />
       <label className="form-labael">
            Email:</label>

@@ -19,7 +19,7 @@ const Login = () => {
       const response = await axios.post('http://localhost:3001/login', { username, password });
       console.log('Login successful');
       const { dashboard, user } = response.data;
-      console.log(response.data);
+      // console.log(response.data);
   
       // Redirect user to the appropriate dashboard based on role
       if (dashboard === 'student') {

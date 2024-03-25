@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import axios from 'axios';
 import "./superadmin.css";
 
@@ -11,12 +11,24 @@ const AddStudentForm = () => {
     email: '',
     password: '',
     department: '',
+    school: '',
     gender: '',
     phoneNumber: '',
     dateOfBirth: '',
     monthOfGraduation: ''
   });
   const [hodDepartments, setHodDepartments] = useState([]);
+  const location = useLocation()
+
+  const admin = location.state?.superAdmin
+
+  useEffect(()=>{
+    if(!admin){
+      navigate("/login")
+      return
+    }
+  })
+  
 
   useEffect(() => {
     const fetchHodDepartments = async () => {
@@ -31,6 +43,11 @@ const AddStudentForm = () => {
     };
     fetchHodDepartments();
   }, []);
+
+  if (!admin ) {
+  
+    return null;
+  }
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -91,6 +108,13 @@ const AddStudentForm = () => {
               <option key={index} value={department}>{department}</option>
             ))}
           </select>
+          <input className="form-control"
+            type="text"
+            name="school"
+            value={formData.school}
+            onChange={handleChange}
+            placeholder="School"
+          />
           <select className="form-control" name="gender" value={formData.gender} onChange={handleChange}>
             <option value="">Select Gender</option>
             <option value="Male">Male</option>

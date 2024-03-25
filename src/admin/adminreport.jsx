@@ -12,6 +12,10 @@ const OfficerReportPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if(!officer){
+      navigate("/login")
+      return
+    }
     const fetchStudents = async () => {
       try {
         const queryParams = {
@@ -39,7 +43,10 @@ const OfficerReportPage = () => {
 
     fetchStudents();
   }, [officer]);
+  if (!officer) {
 
+    return null;
+  }
   const handlePrint = () => {
     window.print(); // Trigger the print functionality
   };

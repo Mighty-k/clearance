@@ -13,6 +13,10 @@ const HodReportPage = () => {
   const navigate = useNavigate();
 
   useEffect(() =>{
+    if(!hod){
+      navigate("/login")
+      return
+    }
     axios
         .get(`http://localhost:3001/hod/students?clearanceRequest=true&hodApproval=pending&department=${hod.department}`)
         .then((res) => {
@@ -34,7 +38,10 @@ const HodReportPage = () => {
   }, [hod, students]); 
 
 
+  if (!hod ) {
 
+    return null;
+  }
  
 
   const handlePrint = () => {

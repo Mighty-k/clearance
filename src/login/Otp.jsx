@@ -39,13 +39,13 @@ const OtpPage = () => {
     try {
       const response = await axios.post('http://localhost:3001/verify-otp', { email: user.email, otp });
       console.log('OTP verification successful');
-      console.log('response: ', response);
+      // console.log('response: ', response);
       if (user.role === 'admin') {
         navigate('/officer', { state: { admin: user } });
       } else if (user.role === 'hod') {
         navigate('/hod', { state: { hod: user } });
       } else if(user.role === 'superAdmin'){
-        navigate('/admin', {state: {super:user}})
+        navigate('/superadmin', {state: {super:user}})
       }
       
       

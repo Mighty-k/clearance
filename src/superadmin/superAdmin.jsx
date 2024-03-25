@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router';
 import axios from 'axios';
 
 const SuperAdmin = () => {
+
     const [isExpanded, setIsExpanded] = useState(false);
     const [students, setStudents] = useState([])
     const [admins, setAdmins] = useState([])
@@ -17,27 +18,20 @@ const SuperAdmin = () => {
   const navigate = useNavigate();
   // Dummy data for demonstration
 
-
-  useEffect( ( )=>{
-    if(!superAdmin){
-      navigate("/admin")
-      return;
-    }
-  })
-  const handleLogout = async () => {
-    try {
-        await axios.get('http://localhost:3001/logout');
-        navigate('/login');
-
-        // Replace current location with login page to remove it from history
-        window.history.replaceState(null, '', '/login');
-    } catch (error) {
-        console.error('Logout failed:', error);
-    }
+  const handleLogout =  () => {
+    navigate("/login", {replace:true})
 };
-  useEffect(() =>{
+useEffect(() => {
+
+  if (!superAdmin) {
+    navigate('/login');
+    return;
+  }
+
     const fetchdata = async () => {
       try{
+      
+
         const studentsResponse = await  axios.get("http://localhost:3001/api/users/allStudents");
         setStudents(studentsResponse.data);
         const adminsResponse = await  axios.get("http://localhost:3001/api/users/alladmins");
@@ -49,7 +43,11 @@ const SuperAdmin = () => {
       }
     };
     fetchdata()
-  }, [])
+  }, [superAdmin])
+
+  if (!superAdmin) {
+    return null;
+  }
 
   const indexOfLastStudent = currentPage * studentsPerPage;
   const indexOfFirstStudent = indexOfLastStudent - studentsPerPage;
@@ -69,15 +67,15 @@ const SuperAdmin = () => {
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const gotoAddHod = () => {
-    navigate("/addhod")
+    navigate("/addhod", {state:{superAdmin}} )
   }
   const gotoAddStudent = () => {
-    navigate("/addstudent")
+    navigate("/addstudent", {state:{superAdmin}})
   }
 
   
   return (
-    <div className="container super bg-white bg-opacity-50 rounded-3">
+    <div className="container das-body super bg-white bg-opacity-50 rounded-3">
             <div
         className={`nav-wrapper ${isExpanded ? "nav-expanded" : ""}`}
         onMouseOver={handleHover}
