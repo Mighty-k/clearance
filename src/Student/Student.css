@@ -18,6 +18,7 @@
 .nav-wrapper .nav-link {
   white-space: nowrap;
   color: #fff; /* Ensure the color of the text and icons is white */
+  cursor: pointer;
 }
 
 .nav-wrapper .nav-link.active {
@@ -49,6 +50,7 @@ body{
   background-repeat: no-repeat;
   background-size: cover;
   background-attachment: fixed;
+  height: 100% !important;
 }
 
 .cardd {
