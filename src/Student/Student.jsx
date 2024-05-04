@@ -25,7 +25,7 @@ const StudentDashboard = () => {
 
   const handleRequestClearance = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/students/${student.id}`, {
+      const response = await fetch(`https://clearance-database.onrender.com/students/${student.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ const handleLogout = () => {
   // Fetch student data dynamically
   const fetchStudentData = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/students/${Student_Data.id}`);
+      const response = await fetch(`https://clearance-database.onrender.com/students/${Student_Data.id}`);
       if (!response.ok) {
         throw new Error('Failed to fetch student data');
       }
